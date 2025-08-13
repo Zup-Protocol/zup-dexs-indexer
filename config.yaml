@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+name: Zup DEXs Indexer
+description: This is the primary indexer used by the Zup Protocol to calculate yields. It aggregates data from all protocols supported by Zup across different networks. For each network, it includes all Zup-supported DEXs in a single indexer.
+contracts:
+  - name: UniswapV2Factory
+    abi_file_path: ./abis/factories/UniswapV2Factory.json
+    handler: ./src/v2-pools/mappings/factory/dexs/uniswap-v2-factory.ts
+    events:
+      - event: PairCreated(address indexed token0, address indexed token1, address pair, uint256)
+  - name: UniswapV2Pool
+    abi_file_path: ./abis/pools/UniswapV2Pool.json
+    handler: ./src/v2-pools/mappings/pool/dexs/uniswap/index.ts
+    events:
+      - event: Mint(address indexed sender, uint256 amount0, uint256 amount1)
+      - event: Burn(address indexed sender, uint256 amount0, uint256 amount1, address indexed to)
+      - event: Swap(address indexed sender, uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address indexed to)
+      - event: Sync(uint112 reserve0, uint112 reserve1)
+
+networks:
+  - id: 42161 # Arbitrum
+    start_block: 150442611
+    contracts:
+      - name: UniswapV2Factory
+        address: 0xf1D7CC64Fb4452F05c498126312eBE29f30Fbcf9
+
+unordered_multichain_mode: true
+preload_handlers: true

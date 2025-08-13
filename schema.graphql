@@ -1,0 +1,86 @@
+enum PoolType {
+  V2
+  V3
+  V4
+}
+
+type Token {
+  id: Bytes!
+  usdPrice: BigDecimal!
+  decimals: Int!
+  totalValuePooledUsd: BigDecimal!
+  totalTokenPooledAmount: BigDecimal!
+  symbol: String!
+  name: String!
+}
+
+type Pool {
+  id: Bytes!
+  token0: Token!
+  token1: Token!
+  currentFeeTier: Int!
+  initialFeeTier: Int!
+  totalValueLockedUSD: BigDecimal!
+  totalValueLockedToken0: BigDecimal!
+  totalValueLockedToken1: BigDecimal!
+  createdAtTimestamp: BigInt!
+  hourlyData: [PoolHourlyData!]! @derivedFrom(field: "pool")
+  dailyData: [PoolDailyData!]! @derivedFrom(field: "pool")
+  protocol: Protocol!
+  poolType: PoolType!
+  isStablePool: Boolean
+  v4PoolData: V4PoolData
+  v3PoolData: V3PoolData
+  v2PoolData: V2PoolData
+}
+
+type V2PoolData {
+  id: Bytes!
+}
+
+type V3PoolData {
+  id: Bytes!
+  tick: BigInt!
+  sqrtPriceX96: BigInt!
+  tickSpacing: Int!
+}
+
+type V4PoolData {
+  id: Bytes!
+  hooks: Bytes!
+  tick: BigInt!
+  sqrtPriceX96: BigInt!
+  tickSpacing: Int!
+}
+
+type PoolHourlyData {
+  id: Bytes!
+  pool: Pool!
+  feesUSD: BigDecimal!
+  feesToken0: BigDecimal!
+  feesToken1: BigDecimal!
+  hourStartTimestamp: BigInt!
+}
+
+type PoolDailyData {
+  id: Bytes!
+  pool: Pool!
+  feesUSD: BigDecimal!
+  feesToken0: BigDecimal!
+  feesToken1: BigDecimal!
+  dayStartTimestamp: BigInt!
+  totalValueLockedUSD: BigDecimal!
+  totalValueLockedToken0: BigDecimal!
+  totalValueLockedToken1: BigDecimal!
+}
+
+type Protocol {
+  id: String!
+  name: String!
+  logo: String!
+  url: String!
+  positionManager: Bytes!
+  permit2: Bytes
+  v4StateView: Bytes
+  v4PoolManager: Bytes
+}
