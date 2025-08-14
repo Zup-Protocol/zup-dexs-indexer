@@ -22,8 +22,7 @@ export async function handleV4PoolSwap(
 
   let v4PoolEntity = await context.V4PoolData.getOrThrow(poolEntity.id);
 
-  v4PoolSetters.setPricesForPoolWhitelistedTokens(
-    context,
+  [token0Entity, token1Entity] = v4PoolSetters.setPricesForPoolWhitelistedTokens(
     poolEntity,
     token0Entity,
     token1Entity,

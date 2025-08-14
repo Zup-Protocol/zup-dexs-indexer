@@ -2,13 +2,10 @@ import { HandlerContext, Pool as PoolEntity, Token as TokenEntity } from "genera
 import { ZERO_BIG_DECIMAL, ZERO_BIG_INT } from "./constants";
 import { IndexerNetwork } from "./indexer-network";
 import {
-  findNativeToken,
   findStableToken,
   findWrappedNative,
   getPoolDailyDataId,
   getPoolHourlyDataId,
-  isNativePool,
-  isStablePool,
   isVariableWithStablePool,
   isWrappedNativePool,
 } from "./pool-commons";
@@ -44,12 +41,11 @@ export class PoolSetters {
   }
 
   setPricesForPoolWhitelistedTokens(
-    context: HandlerContext,
     poolEntity: PoolEntity,
     poolToken0Entity: TokenEntity,
     poolToken1Entity: TokenEntity,
     poolPrices: PoolPrices
-  ): void {
+  ): [poolToken0Entity: TokenEntity, poolToken1Entity: TokenEntity] {
     if (isVariableWithStablePool(poolEntity, this.network)) {
       let stableToken = findStableToken(poolToken0Entity, poolToken1Entity, this.network);
 
@@ -64,10 +60,7 @@ export class PoolSetters {
           usdPrice: poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice),
         };
 
-        context.Token.set(poolToken0Entity);
-        context.Token.set(poolToken1Entity);
-
-        return;
+        return [poolToken0Entity, poolToken1Entity];
       }
 
       poolToken0Entity = {
@@ -80,10 +73,7 @@ export class PoolSetters {
         usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
       };
 
-      context.Token.set(poolToken0Entity);
-      context.Token.set(poolToken1Entity);
-
-      return;
+      return [poolToken0Entity, poolToken1Entity];
     }
 
     if (isWrappedNativePool(poolEntity, this.network)) {
@@ -93,9 +83,7 @@ export class PoolSetters {
           usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
         };
 
-        context.Token.set(poolToken1Entity);
-
-        return;
+        return [poolToken0Entity, poolToken1Entity];
       }
 
       poolToken0Entity = {
@@ -103,48 +91,7 @@ export class PoolSetters {
         usdPrice: poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice),
       };
 
-      context.Token.set(poolToken0Entity);
-
-      return;
-    }
-
-    if (isNativePool(poolEntity)) {
-      if (findNativeToken(poolToken0Entity, poolToken1Entity).id == poolToken0Entity.id) {
-        poolToken1Entity = {
-          ...poolToken1Entity,
-          usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
-        };
-
-        context.Token.set(poolToken1Entity);
-
-        return;
-      }
-
-      poolToken0Entity = {
-        ...poolToken0Entity,
-        usdPrice: poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice),
-      };
-
-      context.Token.set(poolToken0Entity);
-
-      return;
-    }
-
-    if (isStablePool(poolEntity, this.network)) {
-      poolToken1Entity = {
-        ...poolToken1Entity,
-        usdPrice: poolPrices.token0PerToken1,
-      };
-
-      poolToken0Entity = {
-        ...poolToken0Entity,
-        usdPrice: poolPrices.token1PerToken0,
-      };
-
-      context.Token.set(poolToken0Entity);
-      context.Token.set(poolToken1Entity);
-
-      return;
+      return [poolToken0Entity, poolToken1Entity];
     }
 
     if (poolToken1Entity.usdPrice != ZERO_BIG_DECIMAL) {
@@ -161,8 +108,7 @@ export class PoolSetters {
       };
     }
 
-    context.Token.set(poolToken0Entity);
-    context.Token.set(poolToken1Entity);
+    return [poolToken0Entity, poolToken1Entity];
   }
 
   async setDailyData(

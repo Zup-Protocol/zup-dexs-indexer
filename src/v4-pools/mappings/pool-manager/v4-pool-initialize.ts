@@ -19,8 +19,8 @@ export async function handleV4PoolInitialize(
   v4PoolSetters: PoolSetters,
   tokenService: TokenService
 ): Promise<void> {
-  const token0Entity = await tokenService.getOrCreateTokenEntity(token0Address);
-  const token1Entity = await tokenService.getOrCreateTokenEntity(token1Address);
+  let token0Entity = await tokenService.getOrCreateTokenEntity(token0Address);
+  let token1Entity = await tokenService.getOrCreateTokenEntity(token1Address);
 
   const v4PoolEntity: V4PoolEntity = {
     id: poolId,
@@ -48,8 +48,7 @@ export async function handleV4PoolInitialize(
     v4PoolData_id: v4PoolEntity.id,
   };
 
-  v4PoolSetters.setPricesForPoolWhitelistedTokens(
-    context,
+  [token0Entity, token1Entity] = v4PoolSetters.setPricesForPoolWhitelistedTokens(
     poolEntity,
     token0Entity,
     token1Entity,

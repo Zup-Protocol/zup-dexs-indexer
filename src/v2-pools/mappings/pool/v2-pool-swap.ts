@@ -31,8 +31,7 @@ export async function handleV2PoolSwap(
   let newPoolReserve0Formatted = poolEntity.totalValueLockedToken0.plus(amount0Formatted);
   let newPoolReserve1Formatted = poolEntity.totalValueLockedToken1.plus(amount1Formatted);
 
-  v2PoolSetters.setPricesForPoolWhitelistedTokens(
-    context,
+  [token0Entity, token1Entity] = v2PoolSetters.setPricesForPoolWhitelistedTokens(
     poolEntity,
     token0Entity,
     token1Entity,

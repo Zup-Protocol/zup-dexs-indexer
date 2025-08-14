@@ -20,8 +20,7 @@ export async function handleV3PoolSwap(
   const tokenAmount1Formatted = formatFromTokenAmount(amount1, token1Entity);
   let v3PoolEntity = (await context.V3PoolData.get(poolEntity.id))!;
 
-  v3PoolSetters.setPricesForPoolWhitelistedTokens(
-    context,
+  [token0Entity, token1Entity] = v3PoolSetters.setPricesForPoolWhitelistedTokens(
     poolEntity,
     token0Entity,
     token1Entity,
