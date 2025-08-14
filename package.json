@@ -5,7 +5,7 @@
     "clean": "tsc --clean",
     "build": "tsc --build",
     "watch": "tsc --watch",
-    "mocha": "ts-mocha test/**/*.ts",
+    "mocha": "ts-mocha './test/**/*.test.ts' --recursive --exit",
     "codegen": "envio codegen",
     "dev": "envio dev",
     "start": "envio start",
