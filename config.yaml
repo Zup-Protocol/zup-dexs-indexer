@@ -7,6 +7,7 @@ contracts:
     handler: ./src/v2-pools/mappings/factory/dexs/uniswap-v2-factory.ts
     events:
       - event: PairCreated(address indexed token0, address indexed token1, address pair, uint256)
+
   - name: UniswapV2Pool
     abi_file_path: ./abis/pools/UniswapV2Pool.json
     handler: ./src/v2-pools/mappings/pool/dexs/uniswap/index.ts
@@ -16,12 +17,126 @@ contracts:
       - event: Swap(address indexed sender, uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address indexed to)
       - event: Sync(uint112 reserve0, uint112 reserve1)
 
+  - name: UniswapV3Factory
+    abi_file_path: ./abis/factories/UniswapV3Factory.json
+    handler: ./src/v3-pools/mappings/factory/dexs/uniswap-v3-factory.ts
+    events:
+      - event: PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)
+
+  - name: UniswapV3Pool
+    abi_file_path: ./abis/pools/UniswapV3Pool.json
+    handler: ./src/v3-pools/mappings/pool/dexs/uniswap/index.ts
+    events:
+      - event: Initialize(uint160 sqrtPriceX96, int24 tick)
+      - event: Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)
+      - event: Collect(address indexed owner, address recipient, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount0, uint128 amount1)
+      - event: Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)
+      - event: CollectProtocol(address indexed sender, address indexed recipient, uint128 amount0, uint128 amount1)
+
+  - name: AerodromeV3Factory
+    abi_file_path: ./abis/factories/AerodromeV3Factory.json
+    handler: ./src/v3-pools/mappings/factory/dexs/aerodrome-v3-factory.ts
+    events:
+      - event: PoolCreated(address indexed token0, address indexed token1, int24 indexed tickSpacing, address pool)
+
+  - name: AerodromeV3Pool
+    abi_file_path: ./abis/pools/AerodromeV3Pool.json
+    handler: ./src/v3-pools/mappings/pool/dexs/aerodrome/index.ts
+    events:
+      - event: Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)
+      - event: Initialize(uint160 sqrtPriceX96, int24 tick)
+      - event: Collect(address indexed owner, address recipient, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount0, uint128 amount1)
+      - event: Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)
+      - event: CollectFees(address indexed recipient, uint128 amount0, uint128 amount1)
+
+  - name: AlienBaseV3Factory
+    abi_file_path: ./abis/factories/UniswapV3Factory.json
+    handler: ./src/v3-pools/mappings/factory/dexs/alienbase-v3-factory.ts
+    events:
+      - event: PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)
+
+  - name: BaseSwapV3Factory
+    abi_file_path: ./abis/factories/UniswapV3Factory.json
+    handler: ./src/v3-pools/mappings/factory/dexs/baseswap-v3-factory.ts
+    events:
+      - event: PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)
+
+  - name: OkuV3Factory
+    abi_file_path: ./abis/factories/UniswapV3Factory.json
+    handler: ./src/v3-pools/mappings/factory/dexs/oku-trade-v3-factory.ts
+    events:
+      - event: PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)
+
+  - name: PancakeSwapV3Factory
+    abi_file_path: ./abis/factories/PancakeSwapV3Factory.json
+    handler: ./src/v3-pools/mappings/factory/dexs/pancakeswap-v3-factory.ts
+    events:
+      - event: PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)
+
+  - name: PancakeSwapV3Pool
+    abi_file_path: ./abis/pools/PancakeSwapV3Pool.json
+    handler: ./src/v3-pools/mappings/pool/dexs/pancakeswap/index.ts
+    events:
+      - event: Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)
+      - event: Initialize(uint160 sqrtPriceX96, int24 tick)
+      - event: Collect(address indexed owner, address recipient, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount0, uint128 amount1)
+      - event: Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick, uint128 protocolFeesToken0, uint128 protocolFeesToken1)
+      - event: CollectProtocol(address indexed sender, address indexed recipient, uint128 amount0, uint128 amount1)
+
+  - name: SushiSwapV3Factory
+    abi_file_path: ./abis/factories/UniswapV3Factory.json
+    handler: ./src/v3-pools/mappings/factory/dexs/sushi-swap-v3-factory.ts
+    events:
+      - event: PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)
+
+  - name: ZebraProtocolV3Factory
+    abi_file_path: ./abis/factories/UniswapV3Factory.json
+    handler: ./src/v3-pools/mappings/factory/dexs/zebra-protocol-v3-factory.ts
+    events:
+      - event: PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)
+
+  - name: PancakeSwapV4CLPoolManager
+    abi_file_path: ./abis/PancakeSwapV4CLPoolManager.json
+    handler: ./src/v4-pools/mappings/pool-manager/dexs/pancakeswap-cl/index.ts
+    events:
+      - event: Initialize(bytes32 indexed id, address indexed currency0, address indexed currency1, address hooks, uint24 fee, bytes32 parameters, uint160 sqrtPriceX96, int24 tick)
+      - event: ModifyLiquidity(bytes32 indexed id, address indexed sender, int24 tickLower, int24 tickUpper, int256 liquidityDelta, bytes32 salt)
+      - event: Swap(bytes32 indexed id, address indexed sender, int128 amount0, int128 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick, uint24 fee, uint16 protocolFee)
+
+  - name: UniswapV4PoolManager
+    abi_file_path: ./abis/UniswapV4PoolManager.json
+    handler: ./src/v4-pools/mappings/pool-manager/dexs/uniswap/index.ts
+    events:
+      - event: Initialize(bytes32 indexed id, address indexed currency0, address indexed currency1, uint24 fee, int24 tickSpacing, address hooks, uint160 sqrtPriceX96, int24 tick)
+      - event: ModifyLiquidity(bytes32 indexed id, address indexed sender, int24 tickLower, int24 tickUpper, int256 liquidityDelta, bytes32 salt)
+      - event: Swap(bytes32 indexed id, address indexed sender, int128 amount0, int128 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick, uint24 fee)
+
 networks:
-  - id: 42161 # Arbitrum
-    start_block: 150442611
+  - id: 11155111 # Ethereum Sepolia
+    start_block: 3518270
     contracts:
-      - name: UniswapV2Factory
-        address: 0xf1D7CC64Fb4452F05c498126312eBE29f30Fbcf9
+      - name: UniswapV3Factory
+        address: 0x0227628f3F023bb0B980b67D528571c95c6DaC1c
+      - name: UniswapV3Pool
+      - name: PancakeSwapV3Factory
+        address: 0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865
+      - name: PancakeSwapV3Pool
+      - name: UniswapV4PoolManager
+        address: 0xE03A1074c86CFeDd5C142C4F04F1a1536e203543
+  # - id: 1
+  #   start_block: 12369621
+  #   contracts:
+  #     - name: UniswapV3Factory
+  #       address: 0x1F98431c8aD98523631AE4a59f267346ea31F984
+  #     - name: PancakeSwapV3Factory
+  #       address: 0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865
+  #     - name: SushiSwapV3Factory
+  #       address: 0xbACEB8eC6b9355Dfc0269C18bac9d6E2Bdc29C4F
+  #     - name: UniswapV4PoolManager
+  #       address: 0x000000000004444c5dc75cB358380D2e3dE08A90
+  #     - name: PancakeSwapV3Pool
+  #     - name: UniswapV3Pool
 
 unordered_multichain_mode: true
 preload_handlers: true
+rollback_on_reorg: true

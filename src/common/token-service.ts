@@ -1,18 +1,10 @@
-// import { Address, BigDecimal, BigInt } from "@graphprotocol/graph-ts";
-// import { Token } from "../../generated/schema";
-// import { ERC20 } from "./ERC20";
-// import { CurrentNetwork } from "./current-network";
-
 import { HandlerContext, Token as TokenEntity } from "generated";
 import { ZERO_ADDRESS, ZERO_BIG_DECIMAL } from "./constants";
 import { getTokenMetadataEffect } from "./effects";
 import { IndexerNetwork } from "./indexer-network";
 
 export class TokenService {
-  constructor(
-    readonly context: HandlerContext,
-    readonly network: IndexerNetwork
-  ) {}
+  constructor(readonly context: HandlerContext, readonly network: IndexerNetwork) {}
 
   async getOrCreateTokenEntity(tokenAddress: string): Promise<TokenEntity> {
     let tokenEntity = await this.context.Token.get(tokenAddress);
@@ -35,13 +27,10 @@ export class TokenService {
         return tokenEntity;
       }
 
-      let remoteTokenMetadata = await this.context.effect(
-        getTokenMetadataEffect,
-        {
-          chainId: this.network,
-          tokenAddress: tokenAddress,
-        }
-      );
+      let remoteTokenMetadata = await this.context.effect(getTokenMetadataEffect, {
+        chainId: this.network,
+        tokenAddress: tokenAddress,
+      });
 
       tokenEntity = {
         id: tokenAddress,
@@ -57,7 +46,3 @@ export class TokenService {
     return tokenEntity!;
   }
 }
-
-// export function tokenBaseAmount(token: Token): BigInt {
-//   return BigInt.fromU32(10).pow(token.decimals as u8);
-// }

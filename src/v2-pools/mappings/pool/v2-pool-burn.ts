@@ -2,7 +2,7 @@ import { HandlerContext, Pool as PoolEntity, Token as TokenEntity } from "genera
 import { PoolSetters } from "../../../common/pool-setters";
 import { formatFromTokenAmount } from "../../../common/token-commons";
 
-export function handleV2PoolBurn(
+export async function handleV2PoolBurn(
   context: HandlerContext,
   poolEntity: PoolEntity,
   token0Entity: TokenEntity,
@@ -11,7 +11,7 @@ export function handleV2PoolBurn(
   amount1: bigint,
   eventTimestamp: bigint,
   v2PoolSetters: PoolSetters
-): void {
+): Promise<void> {
   let formattedToken0CollectedAmount = formatFromTokenAmount(amount0, token0Entity);
   let formattedToken1CollectAmount = formatFromTokenAmount(amount1, token1Entity);
 
@@ -47,8 +47,7 @@ export function handleV2PoolBurn(
     totalValuePooledUsd: token1TotalValuePooledUsd,
   };
 
-  v2PoolSetters.setPoolDailyDataTVL(eventTimestamp, poolEntity);
-
+  await v2PoolSetters.setPoolDailyDataTVL(eventTimestamp, poolEntity);
   context.Pool.set(poolEntity);
   context.Token.set(token0Entity);
   context.Token.set(token1Entity);

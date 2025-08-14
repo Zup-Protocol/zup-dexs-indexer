@@ -7,7 +7,7 @@ UniswapV2Pool.Burn.handler(async ({ event, context }) => {
   const token0 = (await context.Token.get(pool.token0_id))!;
   const token1 = (await context.Token.get(pool.token1_id))!;
 
-  handleV2PoolBurn(
+  await handleV2PoolBurn(
     context,
     pool,
     token0,

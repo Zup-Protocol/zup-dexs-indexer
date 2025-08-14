@@ -3,7 +3,7 @@ import { PoolSetters } from "../../../common/pool-setters";
 import { formatFromTokenAmount } from "../../../common/token-commons";
 import { poolReservesToPrice } from "../../common/v2-pool-converters";
 
-export function handleV2PoolSwap(
+export async function handleV2PoolSwap(
   context: HandlerContext,
   poolEntity: PoolEntity,
   token0Entity: TokenEntity,
@@ -15,7 +15,7 @@ export function handleV2PoolSwap(
   eventTimestamp: bigint,
   v2PoolSetters: PoolSetters,
   feeTier: number = 0
-): void {
+): Promise<void> {
   let rawAmount0 = amount0In - amount0Out;
   let rawAmount1 = amount1In - amount1Out;
 
@@ -32,6 +32,7 @@ export function handleV2PoolSwap(
   let newPoolReserve1Formatted = poolEntity.totalValueLockedToken1.plus(amount1Formatted);
 
   v2PoolSetters.setPricesForPoolWhitelistedTokens(
+    context,
     poolEntity,
     token0Entity,
     token1Entity,
@@ -51,8 +52,25 @@ export function handleV2PoolSwap(
   const token0TotalValuePooledUsd = token0Entity.totalTokenPooledAmount.times(token0Entity.usdPrice);
   const token1TotalValuePooledUsd = token1Entity.totalTokenPooledAmount.times(token1Entity.usdPrice);
 
-  v2PoolSetters.setHourlyData(eventTimestamp, context, token0Entity, token1Entity, poolEntity, rawAmount0, rawAmount1);
-  v2PoolSetters.setDailyData(eventTimestamp, context, poolEntity, token0Entity, token1Entity, rawAmount0, rawAmount1);
+  await v2PoolSetters.setHourlyData(
+    eventTimestamp,
+    context,
+    token0Entity,
+    token1Entity,
+    poolEntity,
+    rawAmount0,
+    rawAmount1
+  );
+
+  await v2PoolSetters.setDailyData(
+    eventTimestamp,
+    context,
+    poolEntity,
+    token0Entity,
+    token1Entity,
+    rawAmount0,
+    rawAmount1
+  );
 
   poolEntity = {
     ...poolEntity,

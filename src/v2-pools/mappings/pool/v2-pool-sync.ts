@@ -2,7 +2,7 @@ import { HandlerContext, Pool as PoolEntity, Token as TokenEntity } from "genera
 import { PoolSetters } from "../../../common/pool-setters";
 import { formatFromTokenAmount } from "../../../common/token-commons";
 
-export function handleV2PoolSync(
+export async function handleV2PoolSync(
   context: HandlerContext,
   poolEntity: PoolEntity,
   token0Entity: TokenEntity,
@@ -11,7 +11,7 @@ export function handleV2PoolSync(
   reserve1: bigint,
   eventTimestamp: bigint,
   v2PoolSetters: PoolSetters
-): void {
+): Promise<void> {
   let oldToken0LockedValue = poolEntity.totalValueLockedToken0;
   let oldToken1LockedValue = poolEntity.totalValueLockedToken1;
   let reserve0Formatted = formatFromTokenAmount(reserve0, token0Entity);
@@ -32,8 +32,6 @@ export function handleV2PoolSync(
   const token0TotalValuePooledUsd = token0Entity.totalTokenPooledAmount.times(token0Entity.usdPrice);
   const token1TotalValuePooledUsd = token1Entity.totalTokenPooledAmount.times(token1Entity.usdPrice);
 
-  v2PoolSetters.setPoolDailyDataTVL(eventTimestamp, poolEntity);
-
   poolEntity = {
     ...poolEntity,
     totalValueLockedToken0: poolTotalValueLockedToken0,
@@ -52,6 +50,8 @@ export function handleV2PoolSync(
     totalTokenPooledAmount: token1TotalTokenPooledAmount,
     totalValuePooledUsd: token1TotalValuePooledUsd,
   };
+
+  await v2PoolSetters.setPoolDailyDataTVL(eventTimestamp, poolEntity);
 
   context.Pool.set(poolEntity);
   context.Token.set(token0Entity);

@@ -1,11 +1,20 @@
-import { Pool as PoolEntity, Token as TokenEntity } from "../../../../../../generated/schema";
-import { Sync as SyncEvent } from "../../../../../../generated/templates/UniswapV2Pool/UniswapV2Pool";
+import { UniswapV2Pool } from "generated";
+import { PoolSetters } from "../../../../../common/pool-setters";
 import { handleV2PoolSync } from "../../v2-pool-sync";
 
-export function handleUniswapV2Sync(event: SyncEvent): void {
-  let poolEntity = PoolEntity.load(event.address)!;
-  let token0Entity = TokenEntity.load(poolEntity.token0)!;
-  let token1Entity = TokenEntity.load(poolEntity.token1)!;
+UniswapV2Pool.Sync.handler(async ({ event, context }) => {
+  const pool = (await context.Pool.getOrThrow(event.srcAddress))!;
+  const token0 = (await context.Token.get(pool.token0_id))!;
+  const token1 = (await context.Token.get(pool.token1_id))!;
 
-  handleV2PoolSync(event, poolEntity, token0Entity, token1Entity, event.params.reserve0, event.params.reserve1);
-}
+  await handleV2PoolSync(
+    context,
+    pool,
+    token0,
+    token1,
+    event.params.reserve0,
+    event.params.reserve1,
+    BigInt(event.block.timestamp),
+    new PoolSetters(context, event.chainId)
+  );
+});

@@ -5,7 +5,7 @@ import { ERC20_ABI } from "./constants";
 import { IndexerNetwork } from "./indexer-network";
 import "./string.extension";
 
-export enum Effects {
+enum Effects {
   GET_TOKEN_METADATA = "getTokenMetadata",
 }
 
@@ -35,10 +35,7 @@ export const getTokenMetadataEffect = experimental_createEffect(
     try {
       return await _getRemoteTokenMetadata(input.tokenAddress, input.chainId);
     } catch (error) {
-      context.log.error(
-        `Error fetching metadata for ${input.tokenAddress} on chain ${input.chainId}:`,
-        error as Error
-      );
+      context.log.error(`Error fetching metadata for ${input.tokenAddress} on chain ${input.chainId}:`, error as Error);
 
       throw error;
     }

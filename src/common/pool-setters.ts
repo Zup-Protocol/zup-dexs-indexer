@@ -44,6 +44,7 @@ export class PoolSetters {
   }
 
   setPricesForPoolWhitelistedTokens(
+    context: HandlerContext,
     poolEntity: PoolEntity,
     poolToken0Entity: TokenEntity,
     poolToken1Entity: TokenEntity,
@@ -63,6 +64,9 @@ export class PoolSetters {
           usdPrice: poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice),
         };
 
+        context.Token.set(poolToken0Entity);
+        context.Token.set(poolToken1Entity);
+
         return;
       }
 
@@ -76,6 +80,9 @@ export class PoolSetters {
         usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
       };
 
+      context.Token.set(poolToken0Entity);
+      context.Token.set(poolToken1Entity);
+
       return;
     }
 
@@ -86,6 +93,8 @@ export class PoolSetters {
           usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
         };
 
+        context.Token.set(poolToken1Entity);
+
         return;
       }
 
@@ -93,6 +102,8 @@ export class PoolSetters {
         ...poolToken0Entity,
         usdPrice: poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice),
       };
+
+      context.Token.set(poolToken0Entity);
 
       return;
     }
@@ -104,6 +115,8 @@ export class PoolSetters {
           usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
         };
 
+        context.Token.set(poolToken1Entity);
+
         return;
       }
 
@@ -111,6 +124,8 @@ export class PoolSetters {
         ...poolToken0Entity,
         usdPrice: poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice),
       };
+
+      context.Token.set(poolToken0Entity);
 
       return;
     }
@@ -125,6 +140,9 @@ export class PoolSetters {
         ...poolToken0Entity,
         usdPrice: poolPrices.token1PerToken0,
       };
+
+      context.Token.set(poolToken0Entity);
+      context.Token.set(poolToken1Entity);
 
       return;
     }
@@ -142,6 +160,9 @@ export class PoolSetters {
         usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
       };
     }
+
+    context.Token.set(poolToken0Entity);
+    context.Token.set(poolToken1Entity);
   }
 
   async setDailyData(
@@ -154,7 +175,7 @@ export class PoolSetters {
     amount1: bigint,
     customFee: number = pool.currentFeeTier
   ): Promise<void> {
-    this.setPoolDailyDataTVL(eventTimestamp, pool);
+    await this.setPoolDailyDataTVL(eventTimestamp, pool);
 
     const dailyPoolDataId = getPoolDailyDataId(eventTimestamp, pool);
     let poolDailyDataEntity = (await context.PoolDailyData.get(dailyPoolDataId))!;
@@ -262,7 +283,7 @@ export class PoolSetters {
     return (tokenAmount * BigInt(poolFeeTier)) / BigInt(1000000);
   }
 
-  private _findUserInputToken(amount0: BigInt, token0: TokenEntity, token1: TokenEntity): TokenEntity {
+  private _findUserInputToken(amount0: bigint, token0: TokenEntity, token1: TokenEntity): TokenEntity {
     if (amount0 < ZERO_BIG_INT) return token1;
 
     return token0;

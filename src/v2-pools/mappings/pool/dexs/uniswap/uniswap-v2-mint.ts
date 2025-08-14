@@ -7,7 +7,7 @@ UniswapV2Pool.Mint.handler(async ({ event, context }) => {
   const token0 = (await context.Token.get(pool.token0_id))!;
   const token1 = (await context.Token.get(pool.token1_id))!;
 
-  handleV2PoolMint(
+  await handleV2PoolMint(
     context,
     pool,
     token0,
