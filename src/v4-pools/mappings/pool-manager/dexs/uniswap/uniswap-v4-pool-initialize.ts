@@ -30,6 +30,7 @@ UniswapV4PoolManager.Initialize.handler(async ({ event, context }) => {
     protocol,
     event.params.hooks,
     BigInt(event.block.timestamp),
+    event.chainId,
     new PoolSetters(context, event.chainId),
     new TokenService(context, event.chainId)
   );

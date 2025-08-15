@@ -10,6 +10,7 @@ import { TokenService } from "../../../common/token-service";
 
 export async function handleV2PoolCreated(
   context: HandlerContext,
+  chainId: number,
   eventTimestamp: bigint,
   token0Address: string,
   token1Address: string,
@@ -41,6 +42,7 @@ export async function handleV2PoolCreated(
     v2PoolData_id: v2PoolEntity.id,
     v3PoolData_id: undefined,
     v4PoolData_id: undefined,
+    chainId: chainId,
   };
 
   context.Token.set(token0Entity);

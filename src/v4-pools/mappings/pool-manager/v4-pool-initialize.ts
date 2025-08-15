@@ -16,6 +16,7 @@ export async function handleV4PoolInitialize(
   protocol: ProtocolEntity,
   hooks: string,
   eventTimestamp: bigint,
+  chainId: number,
   v4PoolSetters: PoolSetters,
   tokenService: TokenService
 ): Promise<void> {
@@ -46,6 +47,7 @@ export async function handleV4PoolInitialize(
     v2PoolData_id: undefined,
     v3PoolData_id: undefined,
     v4PoolData_id: v4PoolEntity.id,
+    chainId: chainId,
   };
 
   const newPrices = v4PoolSetters.setPricesForPoolWhitelistedTokens(

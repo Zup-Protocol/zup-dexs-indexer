@@ -22,6 +22,7 @@ export class TokenService {
           totalTokenPooledAmount: ZERO_BIG_DECIMAL,
           totalValuePooledUsd: ZERO_BIG_DECIMAL,
           usdPrice: ZERO_BIG_DECIMAL,
+          chainId: this.network,
         };
 
         return tokenEntity;
@@ -40,6 +41,7 @@ export class TokenService {
         totalTokenPooledAmount: ZERO_BIG_DECIMAL,
         totalValuePooledUsd: ZERO_BIG_DECIMAL,
         usdPrice: ZERO_BIG_DECIMAL,
+        chainId: this.network,
       };
     }
 

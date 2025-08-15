@@ -27,6 +27,7 @@ VeloodromeV3Factory.PoolCreated.handler(async ({ event, context }) => {
     0,
     Number.parseInt(event.params.tickSpacing.toString()),
     BigInt(event.block.timestamp),
+    event.chainId,
     protocol,
     new TokenService(context, event.chainId)
   );

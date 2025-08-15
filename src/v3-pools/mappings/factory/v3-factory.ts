@@ -15,6 +15,7 @@ export async function handleV3PoolCreated(
   feeTier: number,
   tickSpacing: number,
   eventTimestamp: bigint,
+  chainId: number,
   protocol: ProtocolEntity,
   tokenService: TokenService
 ): Promise<PoolEntity> {
@@ -44,6 +45,7 @@ export async function handleV3PoolCreated(
     v2PoolData_id: undefined,
     v4PoolData_id: undefined,
     v3PoolData_id: v3PoolEntity.id,
+    chainId: chainId,
   };
 
   context.V3PoolData.set(v3PoolEntity);

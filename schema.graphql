@@ -12,6 +12,7 @@ type Token {
   totalTokenPooledAmount: BigDecimal!
   symbol: String!
   name: String!
+  chainId: Int!
 }
 
 type Pool {
@@ -32,6 +33,7 @@ type Pool {
   v4PoolData: V4PoolData
   v3PoolData: V3PoolData
   v2PoolData: V2PoolData
+  chainId: Int!
 }
 
 type V2PoolData {

@@ -21,6 +21,7 @@ UniswapV2Factory.PairCreated.handler(async ({ event, context }) => {
 
   await handleV2PoolCreated(
     context,
+    event.chainId,
     BigInt(event.block.timestamp),
     event.params.token0,
     event.params.token1,

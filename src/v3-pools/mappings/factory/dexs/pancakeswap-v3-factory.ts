@@ -27,6 +27,7 @@ PancakeSwapV3Factory.PoolCreated.handler(async ({ event, context }) => {
     Number.parseInt(event.params.fee.toString()),
     Number.parseInt(event.params.tickSpacing.toString()),
     BigInt(event.block.timestamp),
+    event.chainId,
     protocol,
     new TokenService(context, event.chainId)
   );
