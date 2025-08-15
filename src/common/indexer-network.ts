@@ -13,15 +13,15 @@ export namespace IndexerNetwork {
   export function getRpcUrl(network: IndexerNetwork): string {
     switch (network) {
       case IndexerNetwork.MAINNET:
-        return "https://eth.llamarpc.com";
+        return `https://eth-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
       case IndexerNetwork.BASE:
-        return "https://base.llamarpc.com";
+        return `https://base-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
       case IndexerNetwork.SCROLL:
-        return "https://rpc.scroll.io";
+        return `https://scroll-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
       case IndexerNetwork.UNICHAIN:
-        return "https://mainnet.unichain.org";
+        return `https://unichain-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
       case IndexerNetwork.SEPOLIA:
-        return "https://ethereum-sepolia-rpc.publicnode.com";
+        return `https://eth-sepolia.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
     }
   }
 

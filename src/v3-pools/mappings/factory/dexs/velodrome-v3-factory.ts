@@ -1,13 +1,13 @@
-import { VeloodromeV3Factory } from "generated";
+import { VelodromeV3Factory } from "generated";
 import { TokenService } from "../../../../common/token-service";
 import { V3PositionManagerAddress } from "../../../common/v3-position-manager-address";
 import { handleV3PoolCreated } from "../v3-factory";
 
-VeloodromeV3Factory.PoolCreated.contractRegister(({ event, context }) => {
+VelodromeV3Factory.PoolCreated.contractRegister(({ event, context }) => {
   context.addAerodromeV3Pool(event.params.pool);
 });
 
-VeloodromeV3Factory.PoolCreated.handler(async ({ event, context }) => {
+VelodromeV3Factory.PoolCreated.handler(async ({ event, context }) => {
   const protocol = await context.Protocol.getOrCreate({
     id: "velodrome-v3",
     name: "Velodrome V3",

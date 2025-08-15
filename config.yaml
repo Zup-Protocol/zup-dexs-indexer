@@ -39,7 +39,7 @@ contracts:
     events:
       - event: PoolCreated(address indexed token0, address indexed token1, int24 indexed tickSpacing, address pool)
 
-  - name: VeloodromeV3Factory
+  - name: VelodromeV3Factory
     abi_file_path: ./abis/factories/AerodromeV3Factory.json
     handler: ./src/v3-pools/mappings/factory/dexs/velodrome-v3-factory.ts
     events:
@@ -159,7 +159,10 @@ networks:
         address: 0x1f98400000000000000000000000000000000004
       - name: UniswapV3Factory
         address: 0x1f98400000000000000000000000000000000003
+      - name: VelodromeV3Factory
+        address: 0x04625B046C69577EfC40e6c0Bb83CDBAfab5a55F
       - name: UniswapV3Pool
+      - name: AerodromeV3Pool
   - id: 8453 # Base
     start_block: 1371680
     contracts:
