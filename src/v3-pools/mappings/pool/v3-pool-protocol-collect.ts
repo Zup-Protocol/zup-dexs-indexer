@@ -49,6 +49,7 @@ export async function handleV3PoolProtocolCollect(
   };
 
   await v3PoolSetters.setPoolDailyDataTVL(eventTimestamp, poolEntity);
+
   context.Pool.set(poolEntity);
   context.Token.set(token0Entity);
   context.Token.set(token1Entity);

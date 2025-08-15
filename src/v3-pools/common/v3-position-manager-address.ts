@@ -81,4 +81,19 @@ export class V3PositionManagerAddress {
         throw Error(`AlienBase is not supported on ${network}`);
     }
   }
+
+  static velodrome(network: IndexerNetwork): string {
+    switch (network) {
+      case IndexerNetwork.UNICHAIN:
+        return "0x991d5546C4B442B4c5fdc4c8B8b8d131DEB24702";
+      case IndexerNetwork.MAINNET:
+        throw Error(`Velodrome is not supported on Mainnet`);
+      case IndexerNetwork.BASE:
+        throw Error(`Velodrome is not supported on Base`);
+      case IndexerNetwork.SCROLL:
+        throw Error(`Velodrome is not supported on Scroll`);
+      case IndexerNetwork.SEPOLIA:
+        throw Error(`Velodrome is not supported on Sepolia`);
+    }
+  }
 }

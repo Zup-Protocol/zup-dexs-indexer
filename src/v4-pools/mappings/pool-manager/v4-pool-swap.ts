@@ -22,7 +22,7 @@ export async function handleV4PoolSwap(
 
   let v4PoolEntity = await context.V4PoolData.getOrThrow(poolEntity.id);
 
-  [token0Entity, token1Entity] = v4PoolSetters.setPricesForPoolWhitelistedTokens(
+  const newPrices = v4PoolSetters.setPricesForPoolWhitelistedTokens(
     poolEntity,
     token0Entity,
     token1Entity,
@@ -33,14 +33,41 @@ export async function handleV4PoolSwap(
   const poolTotalValueLockedToken1 = poolEntity.totalValueLockedToken1.plus(tokenAmount1Formatted);
 
   const poolTotalValueLockedUSD = poolEntity.totalValueLockedToken0
-    .times(token0Entity.usdPrice)
-    .plus(poolEntity.totalValueLockedToken1.times(token1Entity.usdPrice));
+    .times(newPrices.token0UpdatedPrice)
+    .plus(poolEntity.totalValueLockedToken1.times(newPrices.token1UpdatedPrice));
 
   const token0TotalTokenPooledAmount = token0Entity.totalTokenPooledAmount.plus(tokenAmount0Formatted);
   const token1TotalTokenPooledAmount = token1Entity.totalTokenPooledAmount.plus(tokenAmount1Formatted);
 
-  const token0TotalValuePooledUsd = token0Entity.totalTokenPooledAmount.times(token0Entity.usdPrice);
-  const token1TotalValuePooledUsd = token1Entity.totalTokenPooledAmount.times(token1Entity.usdPrice);
+  const token0TotalValuePooledUsd = token0Entity.totalTokenPooledAmount.times(newPrices.token0UpdatedPrice);
+  const token1TotalValuePooledUsd = token1Entity.totalTokenPooledAmount.times(newPrices.token1UpdatedPrice);
+
+  v4PoolEntity = {
+    ...v4PoolEntity,
+    sqrtPriceX96: sqrtPriceX96,
+    tick: tick,
+  };
+
+  poolEntity = {
+    ...poolEntity,
+    totalValueLockedToken0: poolTotalValueLockedToken0,
+    totalValueLockedToken1: poolTotalValueLockedToken1,
+    totalValueLockedUSD: poolTotalValueLockedUSD,
+  };
+
+  token0Entity = {
+    ...token0Entity,
+    totalTokenPooledAmount: token0TotalTokenPooledAmount,
+    totalValuePooledUsd: token0TotalValuePooledUsd,
+    usdPrice: newPrices.token0UpdatedPrice,
+  };
+
+  token1Entity = {
+    ...token1Entity,
+    totalTokenPooledAmount: token1TotalTokenPooledAmount,
+    totalValuePooledUsd: token1TotalValuePooledUsd,
+    usdPrice: newPrices.token1UpdatedPrice,
+  };
 
   await v4PoolSetters.setHourlyData(
     eventTimestamp,
@@ -64,33 +91,8 @@ export async function handleV4PoolSwap(
     swapFee
   );
 
-  v4PoolEntity = {
-    ...v4PoolEntity,
-    sqrtPriceX96: sqrtPriceX96,
-    tick: tick,
-  };
-
-  poolEntity = {
-    ...poolEntity,
-    totalValueLockedToken0: poolTotalValueLockedToken0,
-    totalValueLockedToken1: poolTotalValueLockedToken1,
-    totalValueLockedUSD: poolTotalValueLockedUSD,
-  };
-
-  token0Entity = {
-    ...token0Entity,
-    totalTokenPooledAmount: token0TotalTokenPooledAmount,
-    totalValuePooledUsd: token0TotalValuePooledUsd,
-  };
-
-  token1Entity = {
-    ...token1Entity,
-    totalTokenPooledAmount: token1TotalTokenPooledAmount,
-    totalValuePooledUsd: token1TotalValuePooledUsd,
-  };
-
-  context.V4PoolData.set(v4PoolEntity);
   context.Pool.set(poolEntity);
   context.Token.set(token0Entity);
   context.Token.set(token1Entity);
+  context.V4PoolData.set(v4PoolEntity);
 }

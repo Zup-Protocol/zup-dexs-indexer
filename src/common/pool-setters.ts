@@ -1,11 +1,14 @@
-import { HandlerContext, Pool as PoolEntity, Token as TokenEntity } from "generated";
+import { BigDecimal, HandlerContext, Pool as PoolEntity, Token as TokenEntity } from "generated";
 import { ZERO_BIG_DECIMAL, ZERO_BIG_INT } from "./constants";
 import { IndexerNetwork } from "./indexer-network";
 import {
+  findNativeToken,
   findStableToken,
   findWrappedNative,
   getPoolDailyDataId,
   getPoolHourlyDataId,
+  isNativePool,
+  isStablePool,
   isVariableWithStablePool,
   isWrappedNativePool,
 } from "./pool-commons";
@@ -45,70 +48,66 @@ export class PoolSetters {
     poolToken0Entity: TokenEntity,
     poolToken1Entity: TokenEntity,
     poolPrices: PoolPrices
-  ): [poolToken0Entity: TokenEntity, poolToken1Entity: TokenEntity] {
+  ): { token0UpdatedPrice: BigDecimal; token1UpdatedPrice: BigDecimal } {
     if (isVariableWithStablePool(poolEntity, this.network)) {
       let stableToken = findStableToken(poolToken0Entity, poolToken1Entity, this.network);
 
       if (stableToken.id == poolToken0Entity.id) {
-        poolToken1Entity = {
-          ...poolToken1Entity,
-          usdPrice: poolPrices.token0PerToken1,
-        };
+        const newToken1Price = poolPrices.token0PerToken1;
+        const newToken0Price = poolPrices.token1PerToken0.times(newToken1Price);
 
-        poolToken0Entity = {
-          ...poolToken0Entity,
-          usdPrice: poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice),
-        };
-
-        return [poolToken0Entity, poolToken1Entity];
+        return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: newToken1Price };
       }
 
-      poolToken0Entity = {
-        ...poolToken0Entity,
-        usdPrice: poolPrices.token1PerToken0,
-      };
+      const newToken0Price = poolPrices.token1PerToken0;
+      const newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
 
-      poolToken1Entity = {
-        ...poolToken1Entity,
-        usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
-      };
-
-      return [poolToken0Entity, poolToken1Entity];
+      return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: newToken1Price };
     }
 
     if (isWrappedNativePool(poolEntity, this.network)) {
       if (findWrappedNative(poolToken0Entity, poolToken1Entity, this.network).id == poolToken0Entity.id) {
-        poolToken1Entity = {
-          ...poolToken1Entity,
-          usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
-        };
+        const newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
 
-        return [poolToken0Entity, poolToken1Entity];
+        return { token0UpdatedPrice: poolToken0Entity.usdPrice, token1UpdatedPrice: newToken1Price };
       }
 
-      poolToken0Entity = {
-        ...poolToken0Entity,
-        usdPrice: poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice),
-      };
+      const newToken0Price = poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice);
 
-      return [poolToken0Entity, poolToken1Entity];
+      return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: poolToken1Entity.usdPrice };
     }
 
+    if (isNativePool(poolEntity)) {
+      if (findNativeToken(poolToken0Entity, poolToken1Entity).id == poolToken0Entity.id) {
+        const newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
+
+        return { token0UpdatedPrice: poolToken0Entity.usdPrice, token1UpdatedPrice: newToken1Price };
+      }
+
+      const newToken0Price = poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice);
+
+      return { token0UpdatedPrice: poolToken0Entity.usdPrice, token1UpdatedPrice: newToken0Price };
+    }
+
+    if (isStablePool(poolEntity, this.network)) {
+      const newToken1Price = poolPrices.token0PerToken1;
+      const newToken0Price = poolPrices.token1PerToken0;
+
+      return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: newToken1Price };
+    }
+
+    let newToken0Price = poolToken0Entity.usdPrice;
+    let newToken1Price = poolToken1Entity.usdPrice;
+
     if (poolToken1Entity.usdPrice != ZERO_BIG_DECIMAL) {
-      poolToken0Entity = {
-        ...poolToken0Entity,
-        usdPrice: poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice),
-      };
+      newToken0Price = poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice);
     }
 
     if (poolToken0Entity.usdPrice != ZERO_BIG_DECIMAL) {
-      poolToken1Entity = {
-        ...poolToken1Entity,
-        usdPrice: poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice),
-      };
+      newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
     }
 
-    return [poolToken0Entity, poolToken1Entity];
+    return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: newToken1Price };
   }
 
   async setDailyData(

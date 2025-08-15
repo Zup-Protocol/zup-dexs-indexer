@@ -31,7 +31,7 @@ export async function handleV2PoolSwap(
   let newPoolReserve0Formatted = poolEntity.totalValueLockedToken0.plus(amount0Formatted);
   let newPoolReserve1Formatted = poolEntity.totalValueLockedToken1.plus(amount1Formatted);
 
-  [token0Entity, token1Entity] = v2PoolSetters.setPricesForPoolWhitelistedTokens(
+  const newPrices = v2PoolSetters.setPricesForPoolWhitelistedTokens(
     poolEntity,
     token0Entity,
     token1Entity,
@@ -42,14 +42,36 @@ export async function handleV2PoolSwap(
   const poolTotalValueLockedToken1 = newPoolReserve1Formatted;
 
   const poolTotalValueLockedUSD = poolEntity.totalValueLockedToken0
-    .times(token0Entity.usdPrice)
-    .plus(poolEntity.totalValueLockedToken1.times(token1Entity.usdPrice));
+    .times(newPrices.token0UpdatedPrice)
+    .plus(poolEntity.totalValueLockedToken1.times(newPrices.token1UpdatedPrice));
 
   const token0TotalTokenPooledAmount = token0Entity.totalTokenPooledAmount.plus(amount0Formatted);
   const token1TotalTokenPooledAmount = token1Entity.totalTokenPooledAmount.plus(amount1Formatted);
 
-  const token0TotalValuePooledUsd = token0Entity.totalTokenPooledAmount.times(token0Entity.usdPrice);
-  const token1TotalValuePooledUsd = token1Entity.totalTokenPooledAmount.times(token1Entity.usdPrice);
+  const token0TotalValuePooledUsd = token0Entity.totalTokenPooledAmount.times(newPrices.token0UpdatedPrice);
+  const token1TotalValuePooledUsd = token1Entity.totalTokenPooledAmount.times(newPrices.token1UpdatedPrice);
+
+  poolEntity = {
+    ...poolEntity,
+    totalValueLockedToken0: poolTotalValueLockedToken0,
+    totalValueLockedToken1: poolTotalValueLockedToken1,
+    totalValueLockedUSD: poolTotalValueLockedUSD,
+    currentFeeTier: feeTier != 0 ? feeTier : poolEntity.currentFeeTier,
+  };
+
+  token0Entity = {
+    ...token0Entity,
+    totalTokenPooledAmount: token0TotalTokenPooledAmount,
+    totalValuePooledUsd: token0TotalValuePooledUsd,
+    usdPrice: newPrices.token0UpdatedPrice,
+  };
+
+  token1Entity = {
+    ...token1Entity,
+    totalTokenPooledAmount: token1TotalTokenPooledAmount,
+    totalValuePooledUsd: token1TotalValuePooledUsd,
+    usdPrice: newPrices.token1UpdatedPrice,
+  };
 
   await v2PoolSetters.setHourlyData(
     eventTimestamp,
@@ -70,26 +92,6 @@ export async function handleV2PoolSwap(
     rawAmount0,
     rawAmount1
   );
-
-  poolEntity = {
-    ...poolEntity,
-    totalValueLockedToken0: poolTotalValueLockedToken0,
-    totalValueLockedToken1: poolTotalValueLockedToken1,
-    totalValueLockedUSD: poolTotalValueLockedUSD,
-    currentFeeTier: feeTier != 0 ? feeTier : poolEntity.currentFeeTier,
-  };
-
-  token0Entity = {
-    ...token0Entity,
-    totalTokenPooledAmount: token0TotalTokenPooledAmount,
-    totalValuePooledUsd: token0TotalValuePooledUsd,
-  };
-
-  token1Entity = {
-    ...token1Entity,
-    totalTokenPooledAmount: token1TotalTokenPooledAmount,
-    totalValuePooledUsd: token1TotalValuePooledUsd,
-  };
 
   context.Pool.set(poolEntity);
   context.Token.set(token0Entity);

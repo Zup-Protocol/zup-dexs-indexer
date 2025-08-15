@@ -48,15 +48,25 @@ export async function handleV4PoolInitialize(
     v4PoolData_id: v4PoolEntity.id,
   };
 
-  [token0Entity, token1Entity] = v4PoolSetters.setPricesForPoolWhitelistedTokens(
+  const newPrices = v4PoolSetters.setPricesForPoolWhitelistedTokens(
     poolEntity,
     token0Entity,
     token1Entity,
     sqrtPriceX96toPrice(sqrtPriceX96, token0Entity, token1Entity)
   );
 
-  context.Pool.set(poolEntity);
-  context.V4PoolData.set(v4PoolEntity);
+  token0Entity = {
+    ...token0Entity,
+    usdPrice: newPrices.token0UpdatedPrice,
+  };
+
+  token1Entity = {
+    ...token1Entity,
+    usdPrice: newPrices.token1UpdatedPrice,
+  };
+
   context.Token.set(token0Entity);
   context.Token.set(token1Entity);
+  context.Pool.set(poolEntity);
+  context.V4PoolData.set(v4PoolEntity);
 }

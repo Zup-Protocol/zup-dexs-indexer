@@ -20,7 +20,7 @@ export async function handleV3PoolSwap(
   const tokenAmount1Formatted = formatFromTokenAmount(amount1, token1Entity);
   let v3PoolEntity = (await context.V3PoolData.get(poolEntity.id))!;
 
-  [token0Entity, token1Entity] = v3PoolSetters.setPricesForPoolWhitelistedTokens(
+  const newPrices = v3PoolSetters.setPricesForPoolWhitelistedTokens(
     poolEntity,
     token0Entity,
     token1Entity,
@@ -31,17 +31,14 @@ export async function handleV3PoolSwap(
   const poolTotalValueLockedToken1 = poolEntity.totalValueLockedToken1.plus(tokenAmount1Formatted);
 
   const poolTotalValueLockedUSD = poolEntity.totalValueLockedToken0
-    .times(token0Entity.usdPrice)
-    .plus(poolEntity.totalValueLockedToken1.times(token1Entity.usdPrice));
+    .times(newPrices.token0UpdatedPrice)
+    .plus(poolEntity.totalValueLockedToken1.times(newPrices.token1UpdatedPrice));
 
   const token0TotalTokenPooledAmount = token0Entity.totalTokenPooledAmount.plus(tokenAmount0Formatted);
   const token1TotalTokenPooledAmount = token1Entity.totalTokenPooledAmount.plus(tokenAmount1Formatted);
 
-  const token0TotalValuePooledUsd = token0Entity.totalTokenPooledAmount.times(token0Entity.usdPrice);
-  const token1TotalValuePooledUsd = token1Entity.totalTokenPooledAmount.times(token1Entity.usdPrice);
-
-  await v3PoolSetters.setHourlyData(eventTimestamp, context, token0Entity, token1Entity, poolEntity, amount0, amount1);
-  await v3PoolSetters.setDailyData(eventTimestamp, context, poolEntity, token0Entity, token1Entity, amount0, amount1);
+  const token0TotalValuePooledUsd = token0Entity.totalTokenPooledAmount.times(newPrices.token0UpdatedPrice);
+  const token1TotalValuePooledUsd = token1Entity.totalTokenPooledAmount.times(newPrices.token1UpdatedPrice);
 
   v3PoolEntity = {
     ...v3PoolEntity,
@@ -61,16 +58,21 @@ export async function handleV3PoolSwap(
     ...token0Entity,
     totalTokenPooledAmount: token0TotalTokenPooledAmount,
     totalValuePooledUsd: token0TotalValuePooledUsd,
+    usdPrice: newPrices.token0UpdatedPrice,
   };
 
   token1Entity = {
     ...token1Entity,
     totalTokenPooledAmount: token1TotalTokenPooledAmount,
     totalValuePooledUsd: token1TotalValuePooledUsd,
+    usdPrice: newPrices.token1UpdatedPrice,
   };
 
-  context.V3PoolData.set(v3PoolEntity);
+  await v3PoolSetters.setHourlyData(eventTimestamp, context, token0Entity, token1Entity, poolEntity, amount0, amount1);
+  await v3PoolSetters.setDailyData(eventTimestamp, context, poolEntity, token0Entity, token1Entity, amount0, amount1);
+
   context.Pool.set(poolEntity);
   context.Token.set(token0Entity);
   context.Token.set(token1Entity);
+  context.V3PoolData.set(v3PoolEntity);
 }
