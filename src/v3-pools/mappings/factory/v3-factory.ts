@@ -1,10 +1,6 @@
-import {
-  HandlerContext,
-  Pool as PoolEntity,
-  Protocol as ProtocolEntity,
-  V3PoolData as V3PoolDataEntity,
-} from "generated";
+import { HandlerContext, Pool as PoolEntity, V3PoolData as V3PoolDataEntity } from "generated";
 import { ZERO_BIG_DECIMAL, ZERO_BIG_INT } from "../../../common/constants";
+import { SupportedProtocol } from "../../../common/supported-protocol";
 import { TokenService } from "../../../common/token-service";
 
 export async function handleV3PoolCreated(
@@ -16,7 +12,7 @@ export async function handleV3PoolCreated(
   tickSpacing: number,
   eventTimestamp: bigint,
   chainId: number,
-  protocol: ProtocolEntity,
+  protocol: SupportedProtocol,
   tokenService: TokenService
 ): Promise<PoolEntity> {
   const token0Entity = await tokenService.getOrCreateTokenEntity(token0Address);
@@ -31,6 +27,7 @@ export async function handleV3PoolCreated(
 
   const poolEntity: PoolEntity = {
     id: poolAddress.toLowerCase(),
+    positionManager: SupportedProtocol.getV3PositionManager(protocol, chainId),
     token0_id: token0Entity.id,
     token1_id: token1Entity.id,
     currentFeeTier: feeTier,
@@ -39,7 +36,7 @@ export async function handleV3PoolCreated(
     totalValueLockedToken0: ZERO_BIG_DECIMAL,
     totalValueLockedToken1: ZERO_BIG_DECIMAL,
     createdAtTimestamp: eventTimestamp,
-    protocol_id: protocol.id,
+    protocol_id: protocol,
     isStablePool: undefined,
     poolType: "V3",
     v2PoolData_id: undefined,
@@ -52,6 +49,13 @@ export async function handleV3PoolCreated(
   context.Pool.set(poolEntity);
   context.Token.set(token0Entity);
   context.Token.set(token1Entity);
+
+  await context.Protocol.getOrCreate({
+    id: protocol,
+    name: SupportedProtocol.getName(protocol),
+    logo: SupportedProtocol.getLogoUrl(protocol),
+    url: SupportedProtocol.getUrl(protocol),
+  });
 
   return poolEntity;
 }

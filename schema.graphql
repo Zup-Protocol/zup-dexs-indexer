@@ -21,6 +21,7 @@ type Pool {
   token1: Token!
   currentFeeTier: Int!
   initialFeeTier: Int!
+  positionManager: Bytes!
   totalValueLockedUSD: BigDecimal!
   totalValueLockedToken0: BigDecimal!
   totalValueLockedToken1: BigDecimal!
@@ -53,6 +54,9 @@ type V4PoolData {
   tick: BigInt!
   sqrtPriceX96: BigInt!
   tickSpacing: Int!
+  permit2: Bytes!
+  poolManager: Bytes!
+  stateView: Bytes
 }
 
 type PoolHourlyData {
@@ -81,8 +85,4 @@ type Protocol {
   name: String!
   logo: String!
   url: String!
-  positionManager: Bytes!
-  permit2: Bytes
-  v4StateView: Bytes
-  v4PoolManager: Bytes
 }

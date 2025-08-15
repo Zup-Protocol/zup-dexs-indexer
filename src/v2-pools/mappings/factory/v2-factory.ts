@@ -1,11 +1,7 @@
-import {
-  HandlerContext,
-  Pool as PoolEntity,
-  Protocol as ProtocolEntity,
-  V2PoolData as V2PoolDataEntity,
-} from "generated";
+import { HandlerContext, Pool as PoolEntity, V2PoolData as V2PoolDataEntity } from "generated";
 
 import { ZERO_BIG_DECIMAL } from "../../../common/constants";
+import { SupportedProtocol } from "../../../common/supported-protocol";
 import { TokenService } from "../../../common/token-service";
 
 export async function handleV2PoolCreated(
@@ -16,7 +12,7 @@ export async function handleV2PoolCreated(
   token1Address: string,
   poolAddress: string,
   feeTier: number,
-  protocol: ProtocolEntity,
+  protocol: SupportedProtocol,
   tokenService: TokenService
 ): Promise<PoolEntity> {
   const token0Entity = await tokenService.getOrCreateTokenEntity(token0Address);
@@ -28,12 +24,13 @@ export async function handleV2PoolCreated(
 
   const poolEntity: PoolEntity = {
     id: poolAddress.toLowerCase(),
+    positionManager: SupportedProtocol.getV2PositionManager(protocol, chainId),
     createdAtTimestamp: eventTimestamp,
     currentFeeTier: feeTier,
     initialFeeTier: feeTier,
     totalValueLockedToken0: ZERO_BIG_DECIMAL,
     poolType: "V2",
-    protocol_id: protocol.id,
+    protocol_id: protocol,
     token0_id: token0Entity.id,
     token1_id: token1Entity.id,
     totalValueLockedToken1: ZERO_BIG_DECIMAL,
@@ -48,6 +45,13 @@ export async function handleV2PoolCreated(
   context.Token.set(token0Entity);
   context.Token.set(token1Entity);
   context.Pool.set(poolEntity);
+
+  await context.Protocol.getOrCreate({
+    id: protocol,
+    name: SupportedProtocol.getName(protocol),
+    logo: SupportedProtocol.getLogoUrl(protocol),
+    url: SupportedProtocol.getUrl(protocol),
+  });
 
   return poolEntity;
 }

@@ -1,6 +1,7 @@
-import { HandlerContext, Pool as PoolEntity, Protocol as ProtocolEntity, V4PoolData as V4PoolEntity } from "generated";
+import { HandlerContext, Pool as PoolEntity, V4PoolData as V4PoolEntity } from "generated";
 import { ZERO_BIG_DECIMAL } from "../../../common/constants";
 import { PoolSetters } from "../../../common/pool-setters";
+import { SupportedProtocol } from "../../../common/supported-protocol";
 import { TokenService } from "../../../common/token-service";
 import { sqrtPriceX96toPrice } from "../../../v3-pools/common/v3-v4-pool-converters";
 
@@ -13,10 +14,11 @@ export async function handleV4PoolInitialize(
   tickSpacing: number,
   tick: bigint,
   sqrtPriceX96: bigint,
-  protocol: ProtocolEntity,
+  protocol: SupportedProtocol,
   hooks: string,
   eventTimestamp: bigint,
   chainId: number,
+  poolManagerAddress: string,
   v4PoolSetters: PoolSetters,
   tokenService: TokenService
 ): Promise<void> {
@@ -25,6 +27,9 @@ export async function handleV4PoolInitialize(
 
   const v4PoolEntity: V4PoolEntity = {
     id: poolId.toLowerCase(),
+    permit2: SupportedProtocol.getPermit2Address(protocol, chainId),
+    poolManager: poolManagerAddress,
+    stateView: SupportedProtocol.getV4StateView(protocol, chainId),
     hooks: hooks,
     sqrtPriceX96: sqrtPriceX96,
     tickSpacing: tickSpacing,
@@ -33,12 +38,13 @@ export async function handleV4PoolInitialize(
 
   const poolEntity: PoolEntity = {
     id: poolId.toLowerCase(),
+    positionManager: SupportedProtocol.getV4PositionManager(protocol, chainId),
     createdAtTimestamp: eventTimestamp,
     currentFeeTier: feeTier,
     initialFeeTier: feeTier,
     isStablePool: undefined,
     poolType: "V4",
-    protocol_id: protocol.id,
+    protocol_id: protocol,
     token0_id: token0Entity.id,
     token1_id: token1Entity.id,
     totalValueLockedToken0: ZERO_BIG_DECIMAL,
@@ -71,4 +77,11 @@ export async function handleV4PoolInitialize(
   context.Token.set(token1Entity);
   context.Pool.set(poolEntity);
   context.V4PoolData.set(v4PoolEntity);
+
+  await context.Protocol.getOrCreate({
+    id: protocol,
+    name: SupportedProtocol.getName(protocol),
+    logo: SupportedProtocol.getLogoUrl(protocol),
+    url: SupportedProtocol.getUrl(protocol),
+  });
 }
