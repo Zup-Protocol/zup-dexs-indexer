@@ -96,4 +96,12 @@ export class V3PositionManagerAddress {
         throw Error(`Velodrome is not supported on Sepolia`);
     }
   }
+  static honeypop(network: IndexerNetwork): string {
+    switch (network) {
+      case IndexerNetwork.SCROLL:
+        return "0xB6F8D24e28bF5b8AdD2e7510f84F3b9ef03B3435";
+      default:
+        throw Error(`Honeypop is not supported on ${network}`);
+    }
+  }
 }

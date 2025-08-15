@@ -5,7 +5,7 @@ enum PoolType {
 }
 
 type Token {
-  id: Bytes!
+  id: ID!
   usdPrice: BigDecimal!
   decimals: Int!
   totalValuePooledUsd: BigDecimal!
@@ -16,7 +16,7 @@ type Token {
 }
 
 type Pool {
-  id: Bytes!
+  id: ID!
   token0: Token!
   token1: Token!
   currentFeeTier: Int!
@@ -37,18 +37,18 @@ type Pool {
 }
 
 type V2PoolData {
-  id: Bytes!
+  id: ID!
 }
 
 type V3PoolData {
-  id: Bytes!
+  id: ID!
   tick: BigInt!
   sqrtPriceX96: BigInt!
   tickSpacing: Int!
 }
 
 type V4PoolData {
-  id: Bytes!
+  id: ID!
   hooks: Bytes!
   tick: BigInt!
   sqrtPriceX96: BigInt!
@@ -56,7 +56,7 @@ type V4PoolData {
 }
 
 type PoolHourlyData {
-  id: Bytes!
+  id: ID!
   pool: Pool!
   feesUSD: BigDecimal!
   feesToken0: BigDecimal!
@@ -65,7 +65,7 @@ type PoolHourlyData {
 }
 
 type PoolDailyData {
-  id: Bytes!
+  id: ID!
   pool: Pool!
   feesUSD: BigDecimal!
   feesToken0: BigDecimal!
