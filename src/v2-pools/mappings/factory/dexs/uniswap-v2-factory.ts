@@ -1,6 +1,6 @@
 import { UniswapV2Factory } from "generated";
+import { SupportedProtocol } from "../../../../common/supported-protocol";
 import { TokenService } from "../../../../common/token-service";
-import { V2PositionManagerAddress } from "../../../common/v2-position-manager-address";
 import { handleV2PoolCreated } from "../v2-factory";
 
 UniswapV2Factory.PairCreated.contractRegister(({ event, context }) => {
@@ -8,17 +8,6 @@ UniswapV2Factory.PairCreated.contractRegister(({ event, context }) => {
 });
 
 UniswapV2Factory.PairCreated.handler(async ({ event, context }) => {
-  const protocol = await context.Protocol.getOrCreate({
-    id: "uniswap-v2",
-    name: "Uniswap V2",
-    logo: "https://assets-cdn.trustwallet.com/dapps/app.uniswap.org.png",
-    url: "https://uniswap.org/",
-    positionManager: V2PositionManagerAddress.uniswap(event.chainId),
-    permit2: undefined,
-    v4PoolManager: undefined,
-    v4StateView: undefined,
-  });
-
   await handleV2PoolCreated(
     context,
     event.chainId,
@@ -27,7 +16,7 @@ UniswapV2Factory.PairCreated.handler(async ({ event, context }) => {
     event.params.token1,
     event.params.pair,
     3000,
-    protocol,
+    SupportedProtocol.UNISWAP_V2,
     new TokenService(context, event.chainId)
   );
 });
