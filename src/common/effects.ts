@@ -1,5 +1,5 @@
 import { experimental_createEffect, S } from "envio";
-import { createPublicClient, getContract, http } from "viem";
+import { createPublicClient, getContract, http, PublicClient } from "viem";
 
 import { ERC20_ABI } from "./constants";
 import { IndexerNetwork } from "./indexer-network";
@@ -15,14 +15,10 @@ const TokenMetadataSchemaOutput = S.schema({
   symbol: S.string,
 });
 
-type TokenMetadataSchemaOutput = S.Output<typeof TokenMetadataSchemaOutput>;
-
 const TokenMetadataSchemaInput = S.tuple((t) => ({
   tokenAddress: t.item(0, S.string),
   chainId: t.item(1, S.number),
 }));
-
-type TokenMetadataSchemaInput = S.Input<typeof TokenMetadataSchemaInput>;
 
 export const getTokenMetadataEffect = experimental_createEffect(
   {
@@ -42,13 +38,34 @@ export const getTokenMetadataEffect = experimental_createEffect(
   }
 );
 
+const clients: Record<string, PublicClient> = {};
+
+let getClient = (network: IndexerNetwork) => {
+  let client = clients[network.toString()];
+
+  if (client) return client;
+
+  client = createPublicClient({
+    batch: {
+      multicall: true,
+    },
+    transport: http(IndexerNetwork.getRpcUrl(network), { batch: true }),
+  });
+
+  clients[network.toString()] = client;
+
+  return client;
+};
+
+type TokenMetadataSchemaOutput = S.Output<typeof TokenMetadataSchemaOutput>;
+type TokenMetadataSchemaInput = S.Input<typeof TokenMetadataSchemaInput>;
+
 async function _getRemoteTokenMetadata(
   tokenAddress: string,
   network: IndexerNetwork
 ): Promise<TokenMetadataSchemaOutput> {
-  const client = createPublicClient({
-    transport: http(IndexerNetwork.getRpcUrl(network), { batch: true }),
-  });
+  const client = getClient(network);
+
   const contract = getContract({
     abi: ERC20_ABI,
     client,
