@@ -13,16 +13,29 @@ export namespace IndexerNetwork {
   export function getRpcUrl(network: IndexerNetwork): string {
     switch (network) {
       case IndexerNetwork.MAINNET:
-        return `https://eth-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+        return "https://eth.llamarpc.com";
       case IndexerNetwork.BASE:
-        return `https://base-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+        return "https://base.llamarpc.com";
       case IndexerNetwork.SCROLL:
-        return `https://scroll-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+        return "https://rpc.scroll.io";
       case IndexerNetwork.UNICHAIN:
-        return `https://unichain-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+        return "https://mainnet.unichain.org";
       case IndexerNetwork.SEPOLIA:
-        return `https://eth-sepolia.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+        return "https://ethereum-sepolia-rpc.publicnode.com";
     }
+
+    //     switch (network) {
+    //   case IndexerNetwork.MAINNET:
+    //     return `https://eth-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+    //   case IndexerNetwork.BASE:
+    //     return `https://base-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+    //   case IndexerNetwork.SCROLL:
+    //     return `https://scroll-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+    //   case IndexerNetwork.UNICHAIN:
+    //     return `https://unichain-mainnet.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+    //   case IndexerNetwork.SEPOLIA:
+    //     return `https://eth-sepolia.g.alchemy.com/v2/${process.env.ENVIO_RPC_KEY}`;
+    // }
   }
 
   export function nativeToken(network: IndexerNetwork): NativeToken {

@@ -50,10 +50,14 @@ contracts:
     handler: ./src/v3-pools/mappings/pool/dexs/aerodrome/index.ts
     events:
       - event: Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)
-      - event: Initialize(uint160 sqrtPriceX96, int24 tick)
       - event: Collect(address indexed owner, address recipient, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount0, uint128 amount1)
       - event: Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)
       - event: CollectFees(address indexed recipient, uint128 amount0, uint128 amount1)
+      # NOTE: initialize event is called before the pool is created in slipstreams,
+      # causing errors (because the pool is expected to be created already).
+      # As it doesn't do anything relevant now, besides setting the token prices,
+      # (then they are set again in a swap) we can safely ignore it.
+      # - event: Initialize(uint160 sqrtPriceX96, int24 tick)
 
   - name: AlienBaseV3Factory
     abi_file_path: ./abis/factories/UniswapV3Factory.json

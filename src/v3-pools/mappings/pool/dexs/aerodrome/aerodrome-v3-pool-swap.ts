@@ -59,7 +59,7 @@ async function _getPoolSwapFee(network: IndexerNetwork, poolAddress: string): Pr
     address: poolAddress as `0x${string}`,
   });
 
-  const swapFee = contract.read.fee();
+  const swapFee = await contract.read.fee();
   return swapFee;
 }
 

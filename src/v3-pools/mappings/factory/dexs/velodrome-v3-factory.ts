@@ -3,7 +3,7 @@ import { TokenService } from "../../../../common/token-service";
 import { V3PositionManagerAddress } from "../../../common/v3-position-manager-address";
 import { handleV3PoolCreated } from "../v3-factory";
 
-VelodromeV3Factory.PoolCreated.contractRegister(({ event, context }) => {
+VelodromeV3Factory.PoolCreated.contractRegister(async ({ event, context }) => {
   context.addAerodromeV3Pool(event.params.pool);
 });
 

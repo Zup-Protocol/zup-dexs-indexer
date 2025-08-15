@@ -3,6 +3,10 @@ import { TokenService } from "../../../../common/token-service";
 import { V3PositionManagerAddress } from "../../../common/v3-position-manager-address";
 import { handleV3PoolCreated } from "../v3-factory";
 
+ZebraProtocolV3Factory.PoolCreated.contractRegister(({ event, context }) => {
+  context.addUniswapV3Pool(event.params.pool);
+});
+
 ZebraProtocolV3Factory.PoolCreated.handler(async ({ event, context }) => {
   const protocol = await context.Protocol.getOrCreate({
     id: "zebra-v3",

@@ -19,8 +19,8 @@ export async function handleV3PoolCreated(
   protocol: ProtocolEntity,
   tokenService: TokenService
 ): Promise<PoolEntity> {
-  let token0Entity = await tokenService.getOrCreateTokenEntity(token0Address);
-  let token1Entity = await tokenService.getOrCreateTokenEntity(token1Address);
+  const token0Entity = await tokenService.getOrCreateTokenEntity(token0Address);
+  const token1Entity = await tokenService.getOrCreateTokenEntity(token1Address);
 
   const v3PoolEntity: V3PoolDataEntity = {
     id: poolAddress,
@@ -29,7 +29,7 @@ export async function handleV3PoolCreated(
     tick: ZERO_BIG_INT,
   };
 
-  let poolEntity: PoolEntity = {
+  const poolEntity: PoolEntity = {
     id: poolAddress,
     token0_id: token0Address,
     token1_id: token1Address,
