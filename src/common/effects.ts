@@ -55,11 +55,13 @@ async function _getRemoteTokenMetadata(
     address: tokenAddress as `0x${string}`,
   });
 
-  const [name, symbol, decimals] = await Promise.all([
+  let [name, symbol, decimals] = await Promise.all([
     contract.read.name().catch(() => "ERROR_GET_NAME"),
     contract.read.symbol().catch(() => "ERROR_GET_SYMBOL"),
     contract.read.decimals().catch(() => 0),
   ]);
+
+  if (decimals > 255) decimals = 0;
 
   return {
     decimals: decimals,

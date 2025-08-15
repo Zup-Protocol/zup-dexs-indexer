@@ -32,7 +32,7 @@ export async function handleV3PoolInitialize(
   };
 
   poolToken1Entity = {
-    ...poolToken0Entity,
+    ...poolToken1Entity,
     usdPrice: newPrices.token1UpdatedPrice,
   };
 

@@ -56,44 +56,65 @@ export class PoolSetters {
         const newToken1Price = poolPrices.token0PerToken1;
         const newToken0Price = poolPrices.token1PerToken0.times(newToken1Price);
 
-        return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: newToken1Price };
+        return {
+          token0UpdatedPrice: newToken0Price.decimalPlaces(poolToken0Entity.decimals),
+          token1UpdatedPrice: newToken1Price.decimalPlaces(poolToken1Entity.decimals),
+        };
       }
 
       const newToken0Price = poolPrices.token1PerToken0;
       const newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
 
-      return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: newToken1Price };
+      return {
+        token0UpdatedPrice: newToken0Price.decimalPlaces(poolToken0Entity.decimals),
+        token1UpdatedPrice: newToken1Price.decimalPlaces(poolToken1Entity.decimals),
+      };
     }
 
     if (isWrappedNativePool(poolEntity, this.network)) {
       if (findWrappedNative(poolToken0Entity, poolToken1Entity, this.network).id == poolToken0Entity.id) {
         const newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
 
-        return { token0UpdatedPrice: poolToken0Entity.usdPrice, token1UpdatedPrice: newToken1Price };
+        return {
+          token0UpdatedPrice: poolToken0Entity.usdPrice,
+          token1UpdatedPrice: newToken1Price.decimalPlaces(poolToken1Entity.decimals),
+        };
       }
 
       const newToken0Price = poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice);
 
-      return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: poolToken1Entity.usdPrice };
+      return {
+        token0UpdatedPrice: newToken0Price.decimalPlaces(poolToken0Entity.decimals),
+        token1UpdatedPrice: poolToken1Entity.usdPrice,
+      };
     }
 
     if (isNativePool(poolEntity)) {
       if (findNativeToken(poolToken0Entity, poolToken1Entity).id == poolToken0Entity.id) {
         const newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
 
-        return { token0UpdatedPrice: poolToken0Entity.usdPrice, token1UpdatedPrice: newToken1Price };
+        return {
+          token0UpdatedPrice: poolToken0Entity.usdPrice,
+          token1UpdatedPrice: newToken1Price.decimalPlaces(poolToken1Entity.decimals),
+        };
       }
 
       const newToken0Price = poolPrices.token1PerToken0.times(poolToken1Entity.usdPrice);
 
-      return { token0UpdatedPrice: poolToken0Entity.usdPrice, token1UpdatedPrice: newToken0Price };
+      return {
+        token0UpdatedPrice: poolToken0Entity.usdPrice,
+        token1UpdatedPrice: newToken0Price.decimalPlaces(poolToken1Entity.decimals),
+      };
     }
 
     if (isStablePool(poolEntity, this.network)) {
       const newToken1Price = poolPrices.token0PerToken1;
       const newToken0Price = poolPrices.token1PerToken0;
 
-      return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: newToken1Price };
+      return {
+        token0UpdatedPrice: newToken0Price.decimalPlaces(poolToken0Entity.decimals),
+        token1UpdatedPrice: newToken1Price.decimalPlaces(poolToken1Entity.decimals),
+      };
     }
 
     let newToken0Price = poolToken0Entity.usdPrice;
@@ -107,7 +128,10 @@ export class PoolSetters {
       newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
     }
 
-    return { token0UpdatedPrice: newToken0Price, token1UpdatedPrice: newToken1Price };
+    return {
+      token0UpdatedPrice: newToken0Price.decimalPlaces(poolToken0Entity.decimals),
+      token1UpdatedPrice: newToken1Price.decimalPlaces(poolToken1Entity.decimals),
+    };
   }
 
   async setDailyData(
