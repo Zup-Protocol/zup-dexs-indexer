@@ -23,16 +23,16 @@ export async function handleV3PoolCreated(
   const token1Entity = await tokenService.getOrCreateTokenEntity(token1Address);
 
   const v3PoolEntity: V3PoolDataEntity = {
-    id: poolAddress,
+    id: poolAddress.toLowerCase(),
     tickSpacing: tickSpacing,
     sqrtPriceX96: ZERO_BIG_INT,
     tick: ZERO_BIG_INT,
   };
 
   const poolEntity: PoolEntity = {
-    id: poolAddress,
-    token0_id: token0Address,
-    token1_id: token1Address,
+    id: poolAddress.toLowerCase(),
+    token0_id: token0Entity.id,
+    token1_id: token1Entity.id,
     currentFeeTier: feeTier,
     initialFeeTier: feeTier,
     totalValueLockedUSD: ZERO_BIG_DECIMAL,

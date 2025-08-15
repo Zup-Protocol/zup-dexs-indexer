@@ -3,7 +3,7 @@ import { PoolSetters } from "../../../../../common/pool-setters";
 import { handleV3PoolInitialize } from "../../v3-pool-initialize";
 
 UniswapV3Pool.Initialize.handler(async ({ event, context }) => {
-  let poolEntity = await context.Pool.getOrThrow(event.srcAddress);
+  let poolEntity = await context.Pool.getOrThrow(event.srcAddress.toLowerCase());
   let token0Entity = await context.Token.getOrThrow(poolEntity.token0_id);
   let token1Entity = await context.Token.getOrThrow(poolEntity.token1_id);
 

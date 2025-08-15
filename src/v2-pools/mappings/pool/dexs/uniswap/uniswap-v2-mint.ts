@@ -3,7 +3,7 @@ import { PoolSetters } from "../../../../../common/pool-setters";
 import { handleV2PoolMint } from "../../v2-pool-mint";
 
 UniswapV2Pool.Mint.handler(async ({ event, context }) => {
-  const pool = (await context.Pool.get(event.srcAddress))!;
+  const pool = await context.Pool.getOrThrow(event.srcAddress.toLowerCase());
   const token0 = (await context.Token.get(pool.token0_id))!;
   const token1 = (await context.Token.get(pool.token1_id))!;
 

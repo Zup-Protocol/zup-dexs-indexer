@@ -98,5 +98,5 @@ export function getPoolDailyDataId(blockTimestamp: bigint, pool: PoolEntity): st
   let dayIdAddress = createHash("sha256").update(dayId.toString()).digest("hex");
   let id = pool.id + dayIdAddress;
 
-  return id;
+  return id.toLowerCase();
 }

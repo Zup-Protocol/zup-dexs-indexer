@@ -7,7 +7,7 @@ export class TokenService {
   constructor(readonly context: HandlerContext, readonly network: IndexerNetwork) {}
 
   async getOrCreateTokenEntity(tokenAddress: string): Promise<TokenEntity> {
-    let tokenEntity = await this.context.Token.get(tokenAddress);
+    let tokenEntity = await this.context.Token.get(tokenAddress.toLowerCase());
     const isNativeToken: boolean = tokenAddress == ZERO_ADDRESS;
 
     if (!tokenEntity) {
@@ -15,7 +15,7 @@ export class TokenService {
         let nativeToken = IndexerNetwork.nativeToken(this.network);
 
         tokenEntity = {
-          id: tokenAddress,
+          id: tokenAddress.toLowerCase(),
           decimals: nativeToken.decimals,
           symbol: nativeToken.symbol,
           name: nativeToken.name,
@@ -34,7 +34,7 @@ export class TokenService {
       });
 
       tokenEntity = {
-        id: tokenAddress,
+        id: tokenAddress.toLowerCase(),
         decimals: remoteTokenMetadata.decimals,
         symbol: remoteTokenMetadata.symbol,
         name: remoteTokenMetadata.name,

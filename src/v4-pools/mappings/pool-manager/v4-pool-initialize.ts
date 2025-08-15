@@ -24,7 +24,7 @@ export async function handleV4PoolInitialize(
   let token1Entity = await tokenService.getOrCreateTokenEntity(token1Address);
 
   const v4PoolEntity: V4PoolEntity = {
-    id: poolId,
+    id: poolId.toLowerCase(),
     hooks: hooks,
     sqrtPriceX96: sqrtPriceX96,
     tickSpacing: tickSpacing,
@@ -32,7 +32,7 @@ export async function handleV4PoolInitialize(
   };
 
   const poolEntity: PoolEntity = {
-    id: poolId,
+    id: poolId.toLowerCase(),
     createdAtTimestamp: eventTimestamp,
     currentFeeTier: feeTier,
     initialFeeTier: feeTier,

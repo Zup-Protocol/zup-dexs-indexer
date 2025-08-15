@@ -3,7 +3,7 @@ import { PoolSetters } from "../../../../../common/pool-setters";
 import { handleV2PoolSync } from "../../v2-pool-sync";
 
 UniswapV2Pool.Sync.handler(async ({ event, context }) => {
-  const pool = (await context.Pool.getOrThrow(event.srcAddress))!;
+  const pool = await context.Pool.getOrThrow(event.srcAddress.toLowerCase());
   const token0 = (await context.Token.get(pool.token0_id))!;
   const token1 = (await context.Token.get(pool.token1_id))!;
 

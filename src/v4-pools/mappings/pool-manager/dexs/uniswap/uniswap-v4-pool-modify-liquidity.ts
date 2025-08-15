@@ -3,7 +3,7 @@ import { PoolSetters } from "../../../../../common/pool-setters";
 import { handleV4PoolModifyLiquidity } from "../../v4-pool-modify-liquidity";
 
 UniswapV4PoolManager.ModifyLiquidity.handler(async ({ event, context }) => {
-  const poolEntity = await context.Pool.getOrThrow(event.params.id);
+  const poolEntity = await context.Pool.getOrThrow(event.params.id.toLowerCase());
   const token0 = await context.Token.getOrThrow(poolEntity.token0_id);
   const token1 = await context.Token.getOrThrow(poolEntity.token1_id);
 

@@ -23,11 +23,11 @@ export async function handleV2PoolCreated(
   const token1Entity = await tokenService.getOrCreateTokenEntity(token1Address);
 
   const v2PoolEntity: V2PoolDataEntity = {
-    id: poolAddress,
+    id: poolAddress.toLowerCase(),
   };
 
   const poolEntity: PoolEntity = {
-    id: poolAddress,
+    id: poolAddress.toLowerCase(),
     createdAtTimestamp: eventTimestamp,
     currentFeeTier: feeTier,
     initialFeeTier: feeTier,
