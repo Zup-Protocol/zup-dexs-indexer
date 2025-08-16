@@ -7,7 +7,9 @@ export class TokenService {
   constructor(readonly context: HandlerContext, readonly network: IndexerNetwork) {}
 
   async getOrCreateTokenEntity(tokenAddress: string): Promise<TokenEntity> {
-    let tokenEntity = await this.context.Token.get(tokenAddress.toLowerCase());
+    const tokenId = IndexerNetwork.getEntityIdFromAddress(this.network, tokenAddress);
+
+    let tokenEntity = await this.context.Token.get(tokenId);
     const isNativeToken: boolean = tokenAddress == ZERO_ADDRESS;
 
     if (!tokenEntity) {
@@ -15,14 +17,14 @@ export class TokenService {
         let nativeToken = IndexerNetwork.nativeToken(this.network);
 
         tokenEntity = {
-          id: tokenAddress.toLowerCase(),
+          id: tokenId,
+          tokenAddress: tokenAddress.toLowerCase(),
           decimals: nativeToken.decimals,
           symbol: nativeToken.symbol,
           name: nativeToken.name,
           totalTokenPooledAmount: ZERO_BIG_DECIMAL,
           totalValuePooledUsd: ZERO_BIG_DECIMAL,
           usdPrice: ZERO_BIG_DECIMAL,
-          chainId: this.network,
         };
 
         return tokenEntity;
@@ -34,14 +36,14 @@ export class TokenService {
       });
 
       tokenEntity = {
-        id: tokenAddress.toLowerCase(),
+        id: tokenId,
+        tokenAddress: tokenAddress.toLowerCase(),
         decimals: remoteTokenMetadata.decimals,
         symbol: remoteTokenMetadata.symbol,
         name: remoteTokenMetadata.name,
         totalTokenPooledAmount: ZERO_BIG_DECIMAL,
         totalValuePooledUsd: ZERO_BIG_DECIMAL,
         usdPrice: ZERO_BIG_DECIMAL,
-        chainId: this.network,
       };
     }
 

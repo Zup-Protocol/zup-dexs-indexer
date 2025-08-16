@@ -1,5 +1,6 @@
 import { HandlerContext, Pool as PoolEntity, V3PoolData as V3PoolDataEntity } from "generated";
 import { ZERO_BIG_DECIMAL, ZERO_BIG_INT } from "../../../common/constants";
+import { IndexerNetwork } from "../../../common/indexer-network";
 import { SupportedProtocol } from "../../../common/supported-protocol";
 import { TokenService } from "../../../common/token-service";
 
@@ -17,16 +18,18 @@ export async function handleV3PoolCreated(
 ): Promise<PoolEntity> {
   const token0Entity = await tokenService.getOrCreateTokenEntity(token0Address);
   const token1Entity = await tokenService.getOrCreateTokenEntity(token1Address);
+  const poolId = IndexerNetwork.getEntityIdFromAddress(chainId, poolAddress);
 
   const v3PoolEntity: V3PoolDataEntity = {
-    id: poolAddress.toLowerCase(),
+    id: poolId,
     tickSpacing: tickSpacing,
     sqrtPriceX96: ZERO_BIG_INT,
     tick: ZERO_BIG_INT,
   };
 
   const poolEntity: PoolEntity = {
-    id: poolAddress.toLowerCase(),
+    id: poolId,
+    poolAddress: poolAddress.toLowerCase(),
     positionManager: SupportedProtocol.getV3PositionManager(protocol, chainId),
     token0_id: token0Entity.id,
     token1_id: token1Entity.id,

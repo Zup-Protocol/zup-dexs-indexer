@@ -25,6 +25,10 @@ export namespace IndexerNetwork {
     }
   }
 
+  export function getEntityIdFromAddress(network: IndexerNetwork, address: string): string {
+    return `${network}-${address}`.toLowerCase();
+  }
+
   export function nativeToken(network: IndexerNetwork): NativeToken {
     switch (network) {
       case IndexerNetwork.BASE:

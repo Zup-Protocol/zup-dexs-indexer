@@ -6,19 +6,20 @@ enum PoolType {
 
 type Token {
   id: ID!
+  tokenAddress: String! @index
   usdPrice: BigDecimal!
   decimals: Int!
   totalValuePooledUsd: BigDecimal!
   totalTokenPooledAmount: BigDecimal!
   symbol: String!
   name: String!
-  chainId: Int!
 }
 
 type Pool {
   id: ID!
-  token0: Token!
-  token1: Token!
+  token0: Token! @index
+  token1: Token! @index
+  poolAddress: String! @index
   currentFeeTier: Int!
   initialFeeTier: Int!
   positionManager: Bytes!
@@ -34,7 +35,7 @@ type Pool {
   v4PoolData: V4PoolData
   v3PoolData: V3PoolData
   v2PoolData: V2PoolData
-  chainId: Int!
+  chainId: Int! @index
 }
 
 type V2PoolData {
@@ -81,7 +82,7 @@ type PoolDailyData {
 }
 
 type Protocol {
-  id: String!
+  id: String! @index
   name: String!
   logo: String!
   url: String!

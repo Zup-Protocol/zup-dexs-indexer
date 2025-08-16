@@ -1,5 +1,6 @@
 import { HandlerContext, Pool as PoolEntity, V4PoolData as V4PoolEntity } from "generated";
 import { ZERO_BIG_DECIMAL } from "../../../common/constants";
+import { IndexerNetwork } from "../../../common/indexer-network";
 import { PoolSetters } from "../../../common/pool-setters";
 import { SupportedProtocol } from "../../../common/supported-protocol";
 import { TokenService } from "../../../common/token-service";
@@ -7,7 +8,7 @@ import { sqrtPriceX96toPrice } from "../../../v3-pools/common/v3-v4-pool-convert
 
 export async function handleV4PoolInitialize(
   context: HandlerContext,
-  poolId: string,
+  poolAddress: string,
   token0Address: string,
   token1Address: string,
   feeTier: number,
@@ -24,9 +25,10 @@ export async function handleV4PoolInitialize(
 ): Promise<void> {
   let token0Entity = await tokenService.getOrCreateTokenEntity(token0Address);
   let token1Entity = await tokenService.getOrCreateTokenEntity(token1Address);
+  const poolId = IndexerNetwork.getEntityIdFromAddress(chainId, poolAddress);
 
   const v4PoolEntity: V4PoolEntity = {
-    id: poolId.toLowerCase(),
+    id: poolId,
     permit2: SupportedProtocol.getPermit2Address(protocol, chainId),
     poolManager: poolManagerAddress,
     stateView: SupportedProtocol.getV4StateView(protocol, chainId),
@@ -37,8 +39,9 @@ export async function handleV4PoolInitialize(
   };
 
   const poolEntity: PoolEntity = {
-    id: poolId.toLowerCase(),
+    id: poolId,
     positionManager: SupportedProtocol.getV4PositionManager(protocol, chainId),
+    poolAddress: poolAddress.toLowerCase(),
     createdAtTimestamp: eventTimestamp,
     currentFeeTier: feeTier,
     initialFeeTier: feeTier,
@@ -56,7 +59,7 @@ export async function handleV4PoolInitialize(
     chainId: chainId,
   };
 
-  const newPrices = v4PoolSetters.setPricesForPoolWhitelistedTokens(
+  const newPrices = v4PoolSetters.getPricesForPoolWhitelistedTokens(
     poolEntity,
     token0Entity,
     token1Entity,

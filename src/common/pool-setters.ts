@@ -22,8 +22,8 @@ export class PoolSetters {
     const poolDailyDataId = getPoolDailyDataId(eventTimestamp, poolEntity);
 
     let poolDailyDataEntity = await this.context.PoolDailyData.getOrCreate({
-      id: poolDailyDataId.toLowerCase(),
-      pool_id: poolEntity.id.toLowerCase(),
+      id: poolDailyDataId,
+      pool_id: poolEntity.id,
       dayStartTimestamp: eventTimestamp,
       totalValueLockedToken0: ZERO_BIG_DECIMAL,
       totalValueLockedToken1: ZERO_BIG_DECIMAL,
@@ -43,7 +43,7 @@ export class PoolSetters {
     this.context.PoolDailyData.set(poolDailyDataEntity);
   }
 
-  setPricesForPoolWhitelistedTokens(
+  getPricesForPoolWhitelistedTokens(
     poolEntity: PoolEntity,
     poolToken0Entity: TokenEntity,
     poolToken1Entity: TokenEntity,
@@ -202,12 +202,12 @@ export class PoolSetters {
     let hourlyPoolDataId = getPoolHourlyDataId(eventTimestamp, pool);
     let userInputToken = this._findUserInputToken(amount0, token0, token1);
     let poolHourlyDataEntity = (await context.PoolHourlyData.getOrCreate({
-      id: hourlyPoolDataId.toLowerCase(),
+      id: hourlyPoolDataId,
       feesToken0: ZERO_BIG_DECIMAL,
       feesToken1: ZERO_BIG_DECIMAL,
       feesUSD: ZERO_BIG_DECIMAL,
       hourStartTimestamp: eventTimestamp,
-      pool_id: pool.id.toLowerCase(),
+      pool_id: pool.id,
     }))!;
 
     if (userInputToken.id == pool.token0_id) {

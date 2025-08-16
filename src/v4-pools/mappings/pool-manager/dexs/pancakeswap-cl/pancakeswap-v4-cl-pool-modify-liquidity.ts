@@ -1,9 +1,11 @@
 import { PancakeSwapV4CLPoolManager } from "generated";
+import { IndexerNetwork } from "../../../../../common/indexer-network";
 import { PoolSetters } from "../../../../../common/pool-setters";
 import { handleV4PoolModifyLiquidity } from "../../v4-pool-modify-liquidity";
 
 PancakeSwapV4CLPoolManager.ModifyLiquidity.handler(async ({ event, context }) => {
-  const poolEntity = await context.Pool.getOrThrow(event.params.id.toLowerCase());
+  let poolId = IndexerNetwork.getEntityIdFromAddress(event.chainId, event.params.id);
+  const poolEntity = await context.Pool.getOrThrow(poolId);
   const token0 = await context.Token.getOrThrow(poolEntity.token0_id);
   const token1 = await context.Token.getOrThrow(poolEntity.token1_id);
 
