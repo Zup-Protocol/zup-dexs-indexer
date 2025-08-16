@@ -49,7 +49,7 @@ export class PoolSetters {
     poolToken1Entity: TokenEntity,
     poolPrices: PoolPrices
   ): { token0UpdatedPrice: BigDecimal; token1UpdatedPrice: BigDecimal } {
-    if (isVariableWithStablePool(poolEntity, this.network)) {
+    if (isVariableWithStablePool(poolToken0Entity, poolToken1Entity, this.network)) {
       let stableToken = findStableToken(poolToken0Entity, poolToken1Entity, this.network);
 
       if (stableToken.id == poolToken0Entity.id) {
@@ -71,7 +71,7 @@ export class PoolSetters {
       };
     }
 
-    if (isWrappedNativePool(poolEntity, this.network)) {
+    if (isWrappedNativePool(poolToken0Entity, poolToken1Entity, this.network)) {
       if (findWrappedNative(poolToken0Entity, poolToken1Entity, this.network).id == poolToken0Entity.id) {
         const newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
 
@@ -89,7 +89,7 @@ export class PoolSetters {
       };
     }
 
-    if (isNativePool(poolEntity)) {
+    if (isNativePool(poolToken0Entity, poolToken1Entity)) {
       if (findNativeToken(poolToken0Entity, poolToken1Entity).id == poolToken0Entity.id) {
         const newToken1Price = poolPrices.token0PerToken1.times(poolToken0Entity.usdPrice);
 
@@ -107,7 +107,7 @@ export class PoolSetters {
       };
     }
 
-    if (isStablePool(poolEntity, this.network)) {
+    if (isStablePool(poolToken0Entity, poolToken1Entity, this.network)) {
       const newToken1Price = poolPrices.token0PerToken1;
       const newToken0Price = poolPrices.token1PerToken0;
 
