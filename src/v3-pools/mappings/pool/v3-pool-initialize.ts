@@ -13,7 +13,7 @@ export async function handleV3PoolInitialize(
 ): Promise<void> {
   let v3PoolEntity = await context.V3PoolData.getOrThrow(poolEntity.id);
 
-  const newPrices = v3PoolSetters.setPricesForPoolWhitelistedTokens(
+  const newPrices = v3PoolSetters.getPricesForPoolWhitelistedTokens(
     poolEntity,
     poolToken0Entity,
     poolToken1Entity,

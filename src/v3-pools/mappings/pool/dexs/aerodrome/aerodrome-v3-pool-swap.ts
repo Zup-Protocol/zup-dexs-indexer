@@ -6,9 +6,10 @@ import { PoolSetters } from "../../../../../common/pool-setters";
 import { handleV3PoolSwap } from "../../v3-pool-swap";
 
 AerodromeV3Pool.Swap.handler(async ({ event, context }) => {
-  let poolEntity = await context.Pool.getOrThrow(event.srcAddress.toLowerCase());
-  let token0Entity = await context.Token.getOrThrow(poolEntity.token0_id);
-  let token1Entity = await context.Token.getOrThrow(poolEntity.token1_id);
+  const poolId = IndexerNetwork.getEntityIdFromAddress(event.chainId, event.srcAddress);
+  const poolEntity = await context.Pool.getOrThrow(poolId);
+  const token0Entity = await context.Token.getOrThrow(poolEntity.token0_id);
+  const token1Entity = await context.Token.getOrThrow(poolEntity.token1_id);
 
   const swapFee = await context.effect(swapFeeEffect, { chainId: event.chainId, poolAddress: event.srcAddress });
 

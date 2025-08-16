@@ -52,8 +52,8 @@ export function findStableToken(token0: TokenEntity, token1: TokenEntity, networ
     address.toLowerCase()
   );
 
-  const isToken0Stable = stablecoinsAddressesLowercased.includes(token0.id.toLowerCase());
-  const isToken1Stable = stablecoinsAddressesLowercased.includes(token1!.id.toLowerCase());
+  const isToken0Stable = stablecoinsAddressesLowercased.includes(token0.tokenAddress.toLowerCase());
+  const isToken1Stable = stablecoinsAddressesLowercased.includes(token1!.tokenAddress.toLowerCase());
 
   if (isToken0Stable) return token0;
   if (isToken1Stable) return token1;
@@ -62,8 +62,8 @@ export function findStableToken(token0: TokenEntity, token1: TokenEntity, networ
 }
 
 export function findWrappedNative(token0: TokenEntity, token1: TokenEntity, network: IndexerNetwork): TokenEntity {
-  const isToken0WrappedNative = token0.id.lowercasedEquals(IndexerNetwork.wrappedNativeAddress(network));
-  const isToken1WrappedNative = token1.id.lowercasedEquals(IndexerNetwork.wrappedNativeAddress(network));
+  const isToken0WrappedNative = token0.tokenAddress.lowercasedEquals(IndexerNetwork.wrappedNativeAddress(network));
+  const isToken1WrappedNative = token1.tokenAddress.lowercasedEquals(IndexerNetwork.wrappedNativeAddress(network));
 
   if (isToken0WrappedNative) return token0;
   if (isToken1WrappedNative) return token1;
@@ -72,8 +72,8 @@ export function findWrappedNative(token0: TokenEntity, token1: TokenEntity, netw
 }
 
 export function findNativeToken(token0: TokenEntity, token1: TokenEntity): TokenEntity {
-  const isToken0Native = token0.id.lowercasedEquals(ZERO_ADDRESS);
-  const isToken1Native = token1.id.lowercasedEquals(ZERO_ADDRESS);
+  const isToken0Native = token0.tokenAddress.lowercasedEquals(ZERO_ADDRESS);
+  const isToken1Native = token1.tokenAddress.lowercasedEquals(ZERO_ADDRESS);
 
   if (isToken0Native) return token0;
   if (isToken1Native) return token1;
@@ -86,9 +86,9 @@ export function getPoolHourlyDataId(blockTimestampInSeconds: bigint, pool: PoolE
   let hourId = (blockTimestampInSeconds - pool.createdAtTimestamp) / secondsPerHour;
 
   let hourIdAddress = createHash("sha256").update(hourId.toString()).digest("hex");
-  let id = pool.id + hourIdAddress;
+  let id = pool.poolAddress + hourIdAddress;
 
-  return id;
+  return IndexerNetwork.getEntityIdFromAddress(pool.chainId, id);
 }
 
 export function getPoolDailyDataId(blockTimestamp: bigint, pool: PoolEntity): string {
@@ -96,7 +96,7 @@ export function getPoolDailyDataId(blockTimestamp: bigint, pool: PoolEntity): st
   let dayId = (blockTimestamp - pool.createdAtTimestamp) / BigInt(secondsPerDay);
 
   let dayIdAddress = createHash("sha256").update(dayId.toString()).digest("hex");
-  let id = pool.id + dayIdAddress;
+  let id = pool.poolAddress + dayIdAddress;
 
-  return id.toLowerCase();
+  return IndexerNetwork.getEntityIdFromAddress(pool.chainId, id);
 }
