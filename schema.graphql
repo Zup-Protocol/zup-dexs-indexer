@@ -82,7 +82,7 @@ type PoolDailyData {
 }
 
 type Protocol {
-  id: String! @index
+  id: String!
   name: String!
   logo: String!
   url: String!
